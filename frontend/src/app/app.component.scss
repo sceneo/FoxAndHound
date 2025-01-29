@@ -1,0 +1,20 @@
+.sidenav-container {
+  height: 100vh;
+}
+
+.app-title {
+  margin-left: 16px;
+  font-size: 1.5rem;
+}
+
+mat-nav-list a {
+  text-decoration: none;
+  color: inherit;
+  font-weight: 500;
+}
+
+mat-toolbar {
+  z-index: 2;
+  position: sticky;
+  top: 0;
+}

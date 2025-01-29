@@ -1,2 +1,25 @@
 
-<p>Senior Candidate</p>
+<p>Submit your self-evaluation</p>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-container">
+
+  <h2>Category 1</h2>
+  <div formArrayName="ratingCards" *ngFor="let card of getCategory1Cards(); let i = index">
+    <div [formGroupName]="i" class="rating-card">
+      <mat-form-field appearance="fill">
+        <mat-label>Rating Title</mat-label>
+        <input matInput formControlName="title" placeholder="Enter title">
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <input matInput type="number" formControlName="value" placeholder="Enter rating (0-5)">
+      </mat-form-field>
+    </div>
+  </div>
+
+  <div class="button-group">
+    <button mat-button color="warn" type="button" (click)="clearForm()">Clear</button>
+    <button mat-raised-button color="primary" type="button" (click)="saveForm()">Save</button>
+    <button mat-raised-button color="accent" type="submit">Submit</button>
+  </div>
+</form>

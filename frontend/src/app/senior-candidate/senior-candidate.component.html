@@ -1,27 +1,38 @@
-
 <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-container">
-
   <ng-container *ngFor="let categoryArrangement of getArrangements()">
-    <h2>{{categoryArrangement.name}}</h2>
-    <div formArrayName="ratingCards" *ngFor="let card of getSortedCategoryCards(categoryArrangement.category); let i = index">
-      <p>{{card.value.question}}</p>
-      <div [formGroupName]="i" class="rating-card">
-        <mat-form-field appearance="fill">
-          <input matInput formControlName="textResponse" placeholder="Enter text response">
-        </mat-form-field>
+    <h2>{{ categoryArrangement.name }}</h2>
 
-        <mat-form-field appearance="fill">
-          <input matInput type="number" formControlName="rating" placeholder="Enter rating (0-5)">
-        </mat-form-field>
+    <div formArrayName="ratingCards">
+      <div *ngFor="let cardControl of getCategoryFilteredCards(categoryArrangement.category); let i = index"
+           [formGroupName]="i" class="rating-card">
+
+        <p class="question">{{ cardControl.value.question }}</p>
+
+        <div class="inputs">
+          <mat-form-field appearance="fill" class="text-response-field">
+            <input matInput formControlName="textResponse" placeholder="Enter text response">
+          </mat-form-field>
+
+          <div class="rating-stars">
+            <ng-container *ngFor="let star of [1, 2, 3, 4, 5]; let starIndex = index">
+              <mat-icon
+                [class.selected]="cardControl.value.rating >= star"
+                (click)="updateRating(i, star)">
+                star
+              </mat-icon>
+            </ng-container>
+          </div>
+
+          <div class="power-bar" [ngClass]="getPowerBarClass(cardControl.value.rating, cardControl.value.averageRating)">
+            <p>{{ cardControl.value.averageRating }} ★</p>
+          </div>
+        </div>
       </div>
     </div>
-
-
   </ng-container>
 
   <div class="button-group">
     <button mat-button color="warn" type="button" (click)="clearForm()">Clear</button>
-    <button mat-raised-button color="primary" type="button" (click)="saveForm()">Save</button>
     <button mat-raised-button color="accent" type="submit">Submit</button>
   </div>
 </form>

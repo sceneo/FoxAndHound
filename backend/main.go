@@ -1,38 +1,17 @@
 package main
 
 import (
-	"encoding/json"
 	"log"
-	"net/http"
+    "net/http"
 )
 
-type CategoryEnum string
 
-const (
-	CategoryFood     CategoryEnum = "Food"
-	CategoryElectronics CategoryEnum = "Electronics"
-	CategoryClothing CategoryEnum = "Clothing"
-)
-
-type ResponseObject struct {
-	Name          string       `json:"name"`
-	Category      CategoryEnum `json:"category"`
-	AverageRating float64      `json:"averageRating"`
-}
-
-func getObjectHandler(w http.ResponseWriter, r *http.Request) {
-	response := ResponseObject{
-		Name:          "Sample Product",
-		Category:      CategoryFood,
-		AverageRating: 4.5,
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
-}
 
 func main() {
-	http.HandleFunc("/api/object", getObjectHandler)
-	log.Println("Server is running on port 8080...")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	mux := http.NewServeMux()
+	mux.HandleFunc("/api/rating-cards", getRatingCardDtoObject)
+	handler := enableCORS(mux)
+
+	log.Println("The train has no break! Fox and hound is on its way. Ordering beers already...")
+	log.Fatal(http.ListenAndServe(":8080", handler))
 }

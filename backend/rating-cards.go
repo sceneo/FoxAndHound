@@ -2,16 +2,35 @@ package main
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
+
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
 type RatingCards struct {
-    ID            string       `json:"id"`
-	Question      string       `json:"question"`
-	Category      CategoryEnum `json:"category"`
-	AverageRating float64      `json:"averageRating"`
-	OrderId       int32        `json:"orderId"`
+	ID            string `json:"id" gorm:"primaryKey"`
+	Question      string `json:"question"`
+	Category      string `json:"category"`
+	OrderId       int32   `json:"orderId"`
 }
+
+var db *gorm.DB
+
+func init() {
+    dsn := "devuser:devpassword@tcp(127.0.0.1:3306)/fox_and_hound?charset=utf8mb4&parseTime=True&loc=Local"
+	var err error
+	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	if err != nil {
+		log.Fatal("Failed to connect to database:", err)
+	}
+
+	if err := db.AutoMigrate(&RatingCards{}); err != nil {
+		log.Fatal("Failed to migrate database schema:", err)
+	}
+}
+
 
 func getRatingCardDtoObject(w http.ResponseWriter, r *http.Request) {
 	responses := getRatingCards()
@@ -20,20 +39,12 @@ func getRatingCardDtoObject(w http.ResponseWriter, r *http.Request) {
 }
 
 func getRatingCards() []RatingCards {
-	return []RatingCards{
-		{
-		    ID: "1",
-			Question:      "Would a customer see you as a senior?",
-			Category:      CategoryPerformance,
-			AverageRating: 4.5,
-			OrderId: 1,
-		},
-        {
-            ID: "2",
-            Question:      "How do you rate your proficiency relate to your role description?",
-            Category:      CategoryTechnicalSkillset,
-            AverageRating: 2.5,
-            OrderId: 6,
-        },
-	}
+    var ratingCards []RatingCards
+    result := db.Find(&ratingCards)
+    if result.Error != nil {
+        log.Println("Error fetching rating cards:", result.Error)
+        return []RatingCards{}
+    }
+    log.Printf("Found %d rating cards in the database", len(ratingCards))
+    return ratingCards
 }

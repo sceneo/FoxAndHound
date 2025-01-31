@@ -46,7 +46,6 @@ export class SeniorCandidateComponent {
       id: [card.id],
       question: [card.question],
       category: [card.category],
-      averageRating: [card.averageRating],
       orderId: [card.orderId],
       textResponse: [''],
       rating: [0]

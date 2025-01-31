@@ -83,13 +83,4 @@ export class SeniorCandidateComponent {
   getCategoryFilteredCards(category: Category): FormGroup[] {
     return this.ratingCardForms.controls.filter(card => card.value.category === category) as FormGroup[];
   }
-
-  getPowerBarClass(rating: number, averageRating: number): string {
-    const difference = rating - averageRating;
-    if (difference <= -2) return 'red-bar';
-    if (difference === -1) return 'orange-bar';
-    if (difference === 0) return 'neutral-bar';
-    if (difference === 1) return 'light-green-bar';
-    return 'dark-green-bar';
-  }
 }

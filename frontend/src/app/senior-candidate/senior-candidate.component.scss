@@ -28,43 +28,25 @@
 
   .rating-stars {
     display: flex;
-    cursor: pointer;
+    align-items: center;  /* Vertically center the stars */
+    gap: 0.5rem;  /* Space between the stars */
+
     mat-icon {
       color: lightgray;
-      font-size: 32px;
+      font-size: 36px;  /* Increase the size of the stars */
       transition: color 0.3s;
+
+      /* Ensure the icon fits properly within the container */
+      line-height: 0;  /* Remove any line-height that might cause extra space */
+      height: 36px;  /* Set a fixed height for each icon to ensure proper containment */
+      width: 36px;  /* Set the width to match the height */
+      display: inline-flex;  /* Ensure it behaves like a block element inside the container */
+      align-items: center;  /* Vertically align the icon */
+      justify-content: center;  /* Horizontally center the icon */
 
       &.selected {
         color: gold;
       }
-    }
-  }
-
-  .power-bar {
-    flex: 1;
-    text-align: center;
-    font-weight: bold;
-    padding: 0.3rem 0.5rem;
-    border-radius: 4px;
-
-    &.power-bar-red {
-      background-color: #ff6b6b;
-      color: white;
-    }
-
-    &.power-bar-orange {
-      background-color: #ffa726;
-      color: white;
-    }
-
-    &.power-bar-light-green {
-      background-color: #aed581;
-      color: black;
-    }
-
-    &.power-bar-dark-green {
-      background-color: #388e3c;
-      color: white;
     }
   }
 }

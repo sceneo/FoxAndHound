@@ -23,6 +23,14 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
   },
   {
+    path: "error",
+    loadComponent: () => import('./error/error.component').then(m => m.ErrorComponent),
+  },
+  {
+    path: "successfull",
+    loadComponent: () => import('./successfull/successfull.component').then(m => m.SuccessfullComponent),
+  },
+  {
     path: "unauthorized",
     loadComponent: () => import('./authorization/unauthorized.component').then(m => m.UnauthorizedComponent),
   },

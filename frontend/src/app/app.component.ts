@@ -7,10 +7,16 @@ import {MatListItem, MatNavList} from '@angular/material/list';
 import {MatSidenav, MatSidenavContainer, MatSidenavContent} from '@angular/material/sidenav';
 import {MatToolbar} from '@angular/material/toolbar';
 import {HttpClient, HttpClientModule} from '@angular/common/http';
+import {ReactiveFormsModule} from '@angular/forms';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, HttpClientModule, MatIcon, MatIconButton, MatListItem, MatNavList, MatSidenav, MatSidenavContainer, MatSidenavContent, MatToolbar, RouterLink],
+  imports: [
+    RouterOutlet, HttpClientModule,
+    MatIcon, MatIconButton, MatListItem,
+    MatNavList, MatSidenav, MatSidenavContainer,
+    ReactiveFormsModule,
+    MatSidenavContent, MatToolbar, RouterLink],
   providers:[HttpClient],
   templateUrl: './app.component.html',
   standalone: true,

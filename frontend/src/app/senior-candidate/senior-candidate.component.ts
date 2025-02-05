@@ -1,23 +1,31 @@
 import { Component } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { MatFormField } from '@angular/material/form-field';
-import { MatButton } from '@angular/material/button';
-import { MatInput } from '@angular/material/input';
-import { MatIcon } from '@angular/material/icon';
-import { NgForOf, NgClass } from '@angular/common';
+import {FormArray, FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import { CategoryArrangement } from '../models/category-arrangement.interface';
 import { ContentService } from '../content/content.service';
 import { RatingCardApiService } from './rating-card-api.service';
 import { RatingCard } from '../models/rating-card.interface';
-import {Category} from '../models/category.enum';
+import { Category } from '../models/category.enum';
+import {NgForOf, NgIf} from '@angular/common';
+import {MatIcon} from '@angular/material/icon';
+import {MatFormField} from '@angular/material/form-field';
+import {MatButton} from '@angular/material/button';
+import {MatInput} from '@angular/material/input';
 
 @Component({
   selector: 'app-root',
-  imports: [MatFormField, ReactiveFormsModule, MatButton, MatInput, MatIcon, NgForOf, NgClass],
-  providers: [RatingCardApiService],
   templateUrl: './senior-candidate.component.html',
-  standalone: true,
-  styleUrls: ['./senior-candidate.component.scss']
+  styleUrls: ['./senior-candidate.component.scss'],
+  imports: [
+    NgForOf,
+    ReactiveFormsModule,
+    NgIf,
+    MatIcon,
+    MatFormField,
+    MatButton,
+    MatInput,
+  ],
+  providers: [RatingCardApiService],
+  standalone: true
 })
 export class SeniorCandidateComponent {
   form: FormGroup;
@@ -28,10 +36,13 @@ export class SeniorCandidateComponent {
       ratingCards: this.formBuilder.array([])
     });
 
-    ratingCardApiService.getRatingCards().subscribe(ratingCards => {
+    this.ratingCardApiService.getRatingCards()
+      .subscribe(ratingCards => {
       this.ratingCards = ratingCards;
       this.fillRatingCardsToForm();
-    });
+    },
+        () =>  console.log("we can route to error here?") // TODO
+    );
   }
 
   fillRatingCardsToForm(): void {
@@ -65,11 +76,8 @@ export class SeniorCandidateComponent {
     this.ratingCardForms.clear();
   }
 
-  updateRating(index: number, rating: number) {
-    const ratingControl = this.ratingCardForms.at(index).get('rating');
-    if (ratingControl) {
-      ratingControl.setValue(rating);
-    }
+  updateRating(cardControl: FormGroup, rating: number) {
+    cardControl.get('rating')?.setValue(rating);
   }
 
   onSubmit() {

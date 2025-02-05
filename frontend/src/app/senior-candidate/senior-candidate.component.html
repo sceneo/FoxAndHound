@@ -1,30 +1,32 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-container">
   <ng-container *ngFor="let categoryArrangement of getArrangements()">
-    <h2>{{ categoryArrangement.name }}</h2>
+    <ng-container *ngIf="getCategoryFilteredCards(categoryArrangement.category).length > 0">
+      <h2>{{ categoryArrangement.name }}</h2>
+    </ng-container>
 
     <div formArrayName="ratingCards">
-      <div *ngFor="let cardControl of getCategoryFilteredCards(categoryArrangement.category); let i = index"
-           [formGroupName]="i" class="rating-card">
+      <ng-container *ngFor="let cardControl of getCategoryFilteredCards(categoryArrangement.category); let i = index">
+        <div [formGroup]="cardControl" class="rating-card">
 
-        <p class="question">{{ cardControl.value.question }}</p>
+          <p class="question">{{ cardControl.value.question }}</p>
 
-        <div class="inputs">
-          <mat-form-field appearance="fill" class="text-response-field">
-            <input matInput formControlName="textResponse" placeholder="Enter text response">
-          </mat-form-field>
+          <div class="inputs">
+            <mat-form-field appearance="fill" class="text-response-field">
+              <input matInput formControlName="textResponse" placeholder="Enter text response">
+            </mat-form-field>
 
-          <div class="rating-stars">
-            <ng-container *ngFor="let star of [1, 2, 3, 4, 5]; let starIndex = index">
-              <mat-icon
-                [class.selected]="cardControl.value.rating >= star"
-                (click)="updateRating(i, star)">
-                star
-              </mat-icon>
-            </ng-container>
+            <div class="rating-stars">
+              <ng-container *ngFor="let star of [1, 2, 3, 4, 5]; let starIndex = index">
+                <mat-icon
+                  [class.selected]="cardControl.get('rating')?.value >= star"
+                  (click)="updateRating(cardControl, star)">
+                  star
+                </mat-icon>
+              </ng-container>
+            </div>
           </div>
-
         </div>
-      </div>
+      </ng-container>
     </div>
   </ng-container>
 

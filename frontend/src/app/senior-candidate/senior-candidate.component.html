@@ -1,3 +1,4 @@
+
 <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-container">
   <ng-container *ngFor="let categoryArrangement of getArrangements()">
     <ng-container *ngIf="getCategoryFilteredCards(categoryArrangement.category).length > 0">
@@ -7,12 +8,11 @@
     <div formArrayName="ratingCards">
       <ng-container *ngFor="let cardControl of getCategoryFilteredCards(categoryArrangement.category); let i = index">
         <div [formGroup]="cardControl" class="rating-card">
-
           <p class="question">{{ cardControl.value.question }}</p>
 
           <div class="inputs">
             <mat-form-field appearance="fill" class="text-response-field">
-              <input matInput formControlName="textResponse" placeholder="Enter text response">
+              <textarea matInput formControlName="textResponse" placeholder="Enter text response"></textarea>
             </mat-form-field>
 
             <div class="rating-stars">

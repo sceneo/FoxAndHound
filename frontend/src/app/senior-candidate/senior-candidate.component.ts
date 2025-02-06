@@ -1,28 +1,27 @@
 import { Component } from '@angular/core';
-import {FormArray, FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
+import {FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import { CategoryArrangement } from '../models/category-arrangement.interface';
 import { ContentService } from '../content/content.service';
 import { RatingCardApiService } from './rating-card-api.service';
 import { RatingCard } from '../models/rating-card.interface';
 import { Category } from '../models/category.enum';
-import {NgForOf, NgIf} from '@angular/common';
-import {MatIcon} from '@angular/material/icon';
-import {MatFormField} from '@angular/material/form-field';
-import {MatButton} from '@angular/material/button';
-import {MatInput} from '@angular/material/input';
+import {CommonModule} from '@angular/common';
+import { MatIconModule} from '@angular/material/icon';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatButtonModule} from '@angular/material/button';
+import {MatInputModule} from '@angular/material/input';
 
 @Component({
   selector: 'app-root',
   templateUrl: './senior-candidate.component.html',
   styleUrls: ['./senior-candidate.component.scss'],
   imports: [
-    NgForOf,
+    CommonModule,
     ReactiveFormsModule,
-    NgIf,
-    MatIcon,
-    MatFormField,
-    MatButton,
-    MatInput,
+    MatIconModule,
+    MatFormFieldModule,
+    MatButtonModule,
+    MatInputModule,
   ],
   providers: [RatingCardApiService],
   standalone: true
@@ -36,12 +35,12 @@ export class SeniorCandidateComponent {
       ratingCards: this.formBuilder.array([])
     });
 
-    this.ratingCardApiService.getRatingCards()
-      .subscribe(ratingCards => {
-      this.ratingCards = ratingCards;
-      this.fillRatingCardsToForm();
-    },
-        () =>  console.log("we can route to error here?") // TODO
+    this.ratingCardApiService.getRatingCards().subscribe(
+      (ratingCards) => {
+        this.ratingCards = ratingCards;
+        this.fillRatingCardsToForm();
+      },
+      () => console.log('Error loading rating cards') // Error handling if needed
     );
   }
 
@@ -58,7 +57,7 @@ export class SeniorCandidateComponent {
       question: [card.question],
       category: [card.category],
       orderId: [card.orderId],
-      textResponse: [''],
+      textResponse: [""],
       rating: [0]
     });
   }
@@ -73,11 +72,17 @@ export class SeniorCandidateComponent {
 
   clearForm() {
     this.form.reset();
-    this.ratingCardForms.clear();
+    const ratingCardsArray = this.form.get('ratingCards') as FormArray;
+    ratingCardsArray.clear();
   }
 
   updateRating(cardControl: FormGroup, rating: number) {
     cardControl.get('rating')?.setValue(rating);
+  }
+
+  updateTextResponse(cardControl: FormGroup, event: Event): void {
+    const textarea = event.target as HTMLTextAreaElement;
+    cardControl.get('textResponse')?.setValue(textarea.value);
   }
 
   onSubmit() {
@@ -89,6 +94,12 @@ export class SeniorCandidateComponent {
   }
 
   getCategoryFilteredCards(category: Category): FormGroup[] {
-    return this.ratingCardForms.controls.filter(card => card.value.category === category) as FormGroup[];
+    return this.ratingCardForms.controls.filter(
+      card => card.value.category === category
+    ) as FormGroup[];
+  }
+
+  test(): void {
+    window.alert("test")
   }
 }

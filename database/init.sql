@@ -7,6 +7,23 @@ CREATE TABLE IF NOT EXISTS rating_cards (
     order_id INT NOT NULL
     );
 
+CREATE TABLE Rating (
+                        Id INT AUTO_INCREMENT PRIMARY KEY,
+                        UserId INT NOT NULL,
+                        TimeStamp DATETIME NOT NULL,
+                        RatingCardId INT NOT NULL,
+                        RatingCandidate INT NOT NULL,
+                        TextResponseCandidate TEXT,
+                        RatingEmployer VARCHAR(255),
+                        TextResponseEmployer TEXT
+);
+
+CREATE TABLE TotalRatings (
+                              RatingCardId INT PRIMARY KEY,
+                              AverageRating FLOAT,
+                              TotalSubmissions INT
+);
+
 START TRANSACTION;
 
 -- Insert questions for Performance category

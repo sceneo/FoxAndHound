@@ -57,8 +57,8 @@ export class SeniorCandidateComponent {
       question: [card.question],
       category: [card.category],
       orderId: [card.orderId],
-      textResponse: [""],
-      rating: [0]
+      textResponse: ["", Validators.required],
+      rating: [0, Validators.required]
     });
   }
 
@@ -70,23 +70,14 @@ export class SeniorCandidateComponent {
     return this.form.get('ratingCards') as FormArray;
   }
 
-  clearForm() {
-    this.form.reset();
-    const ratingCardsArray = this.form.get('ratingCards') as FormArray;
-    ratingCardsArray.clear();
-  }
 
   updateRating(cardControl: FormGroup, rating: number) {
     cardControl.get('rating')?.setValue(rating);
   }
 
-  updateTextResponse(cardControl: FormGroup, event: Event): void {
-    const textarea = event.target as HTMLTextAreaElement;
-    cardControl.get('textResponse')?.setValue(textarea.value);
-  }
-
   onSubmit() {
     if (this.form.valid) {
+
       console.log('Form submitted:', this.form.value);
     } else {
       console.error('Form is invalid.');
@@ -97,9 +88,5 @@ export class SeniorCandidateComponent {
     return this.ratingCardForms.controls.filter(
       card => card.value.category === category
     ) as FormGroup[];
-  }
-
-  test(): void {
-    window.alert("test")
   }
 }

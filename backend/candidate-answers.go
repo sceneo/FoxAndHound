@@ -2,7 +2,9 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
+	"net/http"
 	"time"
 )
 
@@ -52,5 +54,59 @@ func SaveCandidateRatings(db *sql.DB, ratingRequest RatingRequest) error {
 		return fmt.Errorf("error committing transaction: %v", err)
 	}
 
+	return nil
+}
+
+func GetAllRatingRequests() ([]RatingRequest, error) {
+	var db = GetDb()
+	var ratings []struct {
+		UserId                int
+		TimeStamp             time.Time
+		RatingCardId          int
+		RatingCandidate       int
+		TextResponseCandidate string
+	}
+
+	result := db.Raw(`
+        SELECT UserId, TimeStamp, RatingCardId, RatingCandidate, TextResponseCandidate
+        FROM Rating
+    `).Scan(&ratings)
+
+	if result.Error != nil {
+		return nil, fmt.Errorf("error querying ratings: %v", result.Error)
+	}
+
+	ratingRequestsMap := make(map[int]RatingRequest)
+
+	for _, rating := range ratings {
+		if _, exists := ratingRequestsMap[rating.UserId]; !exists {
+			ratingRequestsMap[rating.UserId] = RatingRequest{
+				UserId:    rating.UserId,
+				TimeStamp: rating.TimeStamp.Format(time.RFC3339),
+				Ratings:   []Rating{{RatingCardId: rating.RatingCardId, RatingCandidate: rating.RatingCandidate, TextResponseCandidate: rating.TextResponseCandidate}},
+			}
+		} else {
+			request := ratingRequestsMap[rating.UserId]
+			request.Ratings = append(request.Ratings, Rating{RatingCardId: rating.RatingCardId, RatingCandidate: rating.RatingCandidate, TextResponseCandidate: rating.TextResponseCandidate})
+			ratingRequestsMap[rating.UserId] = request
+		}
+	}
+
+	var ratingRequests []RatingRequest
+	for _, request := range ratingRequestsMap {
+		ratingRequests = append(ratingRequests, request)
+	}
+
+	return ratingRequests, nil
+}
+
+func getCandidateAnswersDtoObject(w http.ResponseWriter, r *http.Request) {
+	// TODO: read request and call corrct method
+	responses := getCandidateAnswers("TEST")
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(responses)
+}
+
+func getCandidateAnswers(id interface{}) func(http.ResponseWriter, *http.Request) {
 	return nil
 }

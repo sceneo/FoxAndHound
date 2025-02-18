@@ -1,92 +1,96 @@
-import { Component } from '@angular/core';
-import {FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import { CategoryArrangement } from '../models/category-arrangement.interface';
-import { ContentService } from '../content/content.service';
-import { RatingCardApiService } from './rating-card-api.service';
-import { RatingCard } from '../models/rating-card.interface';
-import { Category } from '../models/category.enum';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {RatingCardApiService} from './rating-card-api.service';
+import {RatingCardDto} from '../models/rating-card-dto.interface';
 import {CommonModule} from '@angular/common';
-import { MatIconModule} from '@angular/material/icon';
-import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
 import {MatInputModule} from '@angular/material/input';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatSliderModule, MatSliderThumb} from '@angular/material/slider';
+import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
+import {ContentService} from '../content/content.service';
+import {CategoryArrangement} from '../models/category-arrangement.interface';
+import {RatingCard} from '../models/rating-card.interface';
+import {Category} from '../models/category.enum'; // Reactive forms
 
 @Component({
   selector: 'app-root',
   templateUrl: './senior-candidate.component.html',
   styleUrls: ['./senior-candidate.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    ReactiveFormsModule,
     MatIconModule,
-    MatFormFieldModule,
     MatButtonModule,
     MatInputModule,
+    MatFormFieldModule,
+    MatSliderModule,
+    ReactiveFormsModule,
+    FormsModule
   ],
   providers: [RatingCardApiService],
   standalone: true
 })
-export class SeniorCandidateComponent {
-  form: FormGroup;
-  private ratingCards: RatingCard[] = [];
+export class SeniorCandidateComponent implements OnInit {
+  isLoading: boolean = false;
+  ratingCards: RatingCard[] = [];
+  ratingForm: FormGroup = new FormGroup({});
+  isFormValid: boolean = false;
 
-  constructor(private formBuilder: FormBuilder, private ratingCardApiService: RatingCardApiService) {
-    this.form = this.formBuilder.group({
-      ratingCards: this.formBuilder.array([])
-    });
+  constructor(private ratingCardApiService: RatingCardApiService, private cdRef: ChangeDetectorRef) {}
 
-    this.ratingCardApiService.getRatingCards().subscribe(
-      (ratingCards) => {
-        this.ratingCards = ratingCards;
-        this.fillRatingCardsToForm();
-      },
-      () => console.log('Error loading rating cards') // Error handling if needed
-    );
+  ngOnInit() {
+  this.cdRef.detach();
+  this.isLoading = true;
+    this.ratingCardApiService
+      .getRatingCards()
+      .subscribe((ratingCardDtos: RatingCardDto[]) => {
+        this.ratingCards = ratingCardDtos.map(dto => ({
+          ...dto,
+          rating: 0,
+          response: ''
+        }));
+        this.isLoading = false;
+          this.initializeForm();
+          this.cdRef.detectChanges();
+      });
   }
 
-  fillRatingCardsToForm(): void {
-    const ratingCardsArray = this.form.get('ratingCards') as FormArray;
-    this.ratingCards.forEach(card => {
-      ratingCardsArray.push(this.createRatingCardFormGroup(card));
-    });
-  }
+  initializeForm() {
+    const controls: Record<string, FormControl> = {}; // Accumulator for controls
 
-  createRatingCardFormGroup(card: RatingCard): FormGroup {
-    return this.formBuilder.group({
-      id: [card.id],
-      question: [card.question],
-      category: [card.category],
-      orderId: [card.orderId],
-      textResponse: ["", Validators.required],
-      rating: [0, Validators.required]
+    this.ratingCards.forEach((card) => {
+      controls[`response_${card.id}`] = new FormControl(card.response || "", [Validators.required]);
+      controls[`rating_${card.id}`] = new FormControl(card.rating || 0, [Validators.required]);
     });
+
+    this.ratingForm = new FormGroup(controls);  // Assign FormGroup after initialization
+    this.ratingForm.valueChanges.subscribe(() => {
+      this.isFormValid = this.ratingForm?.valid;
+    })
   }
 
   getArrangements(): CategoryArrangement[] {
-    return ContentService.getCategoryArrangement();
+    return ContentService.getCategoryArrangement().map(arrangement => {
+      return {
+        ...arrangement,
+        ratingCards: this.getCategoryFilteredCards(arrangement.category)
+      };
+    }).filter(arrangement => arrangement.ratingCards.length > 0);
   }
 
-  get ratingCardForms(): FormArray {
-    return this.form.get('ratingCards') as FormArray;
+  private getCategoryFilteredCards(category: Category): RatingCard[] {
+    return this.ratingCards.filter(
+      card => card.category === category
+    );
   }
 
-
-  updateRating(cardControl: FormGroup, rating: number) {
-    cardControl.get('rating')?.setValue(rating);
-  }
-
-  onSubmit() {
-    if (this.form.valid) {
-
-      console.log('Form submitted:', this.form.value);
+  onSubmit(): void {
+    if (this.isFormValid) {
+      window.alert('Form submitted');
+      console.log(this.ratingForm?.value);  // Logs all form values (responses and ratings)
     } else {
-      console.error('Form is invalid.');
+      window.alert('Form is invalid.');
     }
-  }
-
-  getCategoryFilteredCards(category: Category): FormGroup[] {
-    return this.ratingCardForms.controls.filter(
-      card => card.value.category === category
-    ) as FormGroup[];
   }
 }

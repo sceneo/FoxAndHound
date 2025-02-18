@@ -1,36 +1,24 @@
-
-<form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-container">
-  <ng-container *ngFor="let categoryArrangement of getArrangements()">
-    <ng-container *ngIf="getCategoryFilteredCards(categoryArrangement.category).length > 0">
+<form [formGroup]="ratingForm" (ngSubmit)="onSubmit()">
+    <ng-container *ngFor="let categoryArrangement of getArrangements(); let catIndex = index">
       <h2>{{ categoryArrangement.name }}</h2>
-    </ng-container>
-
-    <div formArrayName="ratingCards">
-      <ng-container *ngFor="let cardControl of getCategoryFilteredCards(categoryArrangement.category); let i = index">
-        <div [formGroup]="cardControl" class="rating-card">
-          <p class="question">{{ cardControl.value.question }}</p>
+      <ng-container *ngFor="let ratingCard of categoryArrangement.ratingCards; let index = index">
+        <div class="rating-card">
+          <p class="question">{{ ratingCard.question }}</p>
 
           <div class="inputs">
-            <mat-form-field appearance="fill" class="text-response-field">
-              <textarea matInput formControlName="textResponse" placeholder="Enter text response"></textarea>
+            <mat-form-field>
+              <textarea matInput [formControlName]="'response_' + ratingCard.id" placeholder="Your answer"></textarea>
             </mat-form-field>
 
-            <div class="rating-stars">
-              <ng-container *ngFor="let star of [1, 2, 3, 4, 5]; let starIndex = index">
-                <mat-icon
-                  [class.selected]="cardControl.get('rating')?.value >= star"
-                  (click)="updateRating(cardControl, star)">
-                  star
-                </mat-icon>
-              </ng-container>
-            </div>
+            <mat-form-field>
+              <textarea matInput [formControlName]="'rating_' + ratingCard.id" placeholder="Your answer"></textarea>
+            </mat-form-field>
           </div>
         </div>
       </ng-container>
-    </div>
-  </ng-container>
+    </ng-container>
 
-  <div class="button-group">
-    <button mat-raised-button color="accent" type="submit" [disabled]="!this.form.valid">Submit</button>
-  </div>
+    <div class="button-group">
+      <button mat-raised-button color="accent" [disabled]="!isFormValid" (click)="onSubmit()">Submit</button>
+    </div>
 </form>

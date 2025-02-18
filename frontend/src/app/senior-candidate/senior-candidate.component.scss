@@ -26,34 +26,10 @@
   .text-response-field {
     flex: 2;
   }
-
-  .rating-stars {
-    display: flex;
-    align-items: center;  /* Vertically center the stars */
-    gap: 0.5rem;  /* Space between the stars */
-
-    mat-icon {
-      color: lightgray;
-      font-size: 36px;  /* Increase the size of the stars */
-      transition: color 0.3s;
-
-      /* Ensure the icon fits properly within the container */
-      line-height: 0;  /* Remove any line-height that might cause extra space */
-      height: 36px;  /* Set a fixed height for each icon to ensure proper containment */
-      width: 36px;  /* Set the width to match the height */
-      display: inline-flex;  /* Ensure it behaves like a block element inside the container */
-      align-items: center;  /* Vertically align the icon */
-      justify-content: center;  /* Horizontally center the icon */
-
-      &.selected {
-        color: gold;
-      }
-    }
-  }
 }
-
 .button-group {
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
 }
+

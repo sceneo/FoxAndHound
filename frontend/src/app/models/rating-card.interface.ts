@@ -1,8 +1,7 @@
-import {Category} from './category.enum';
+import {RatingCardDto} from './rating-card-dto.interface';
 
-export interface RatingCard {
-  id: string;
-  question: string;
-  category: Category;
-  orderId: number;
+
+export interface RatingCard extends RatingCardDto {
+  rating: number | undefined;
+  response: string | undefined;
 }

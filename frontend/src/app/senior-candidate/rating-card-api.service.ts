@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
-import {RatingCard} from '../models/rating-card.interface';
+import {RatingCardDto} from '../models/rating-card-dto.interface';
 import {HttpClient} from '@angular/common/http';
 
 
@@ -12,8 +12,8 @@ export class RatingCardApiService {
 
   constructor(private http: HttpClient) {}
 
-  getRatingCards(): Observable<RatingCard[]> {
-    return this.http.get<RatingCard[]>(this.apiUrl);
+  getRatingCards(): Observable<RatingCardDto[]> {
+    return this.http.get<RatingCardDto[]>(this.apiUrl);
   }
 
 }

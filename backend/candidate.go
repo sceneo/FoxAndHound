@@ -18,7 +18,8 @@ func getAllCandidatesDtoObject(w http.ResponseWriter, r *http.Request) {
 
 func getAllCandidates() []Candidate {
 
-	ratingRequests, err := GetAllRatingRequests()
+	var ratingRequests, err = GetAllRatingRequests()
+
 	if err != nil {
 		return nil
 	}

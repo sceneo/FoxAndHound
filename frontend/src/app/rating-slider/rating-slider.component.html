@@ -1,4 +1,10 @@
 
-<mat-slider>
+<mat-slider
+  min="0"
+  max="125"
+  step="25"
+  showTickMarks
+  discrete
+  [displayWith]="formatLabel">
   <input matSliderThumb (valueChange)="updateRating($event)">
 </mat-slider>

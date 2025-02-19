@@ -1,2 +1,8 @@
 
-<p>Employer</p>
+<mat-form-field>
+  <mat-select>
+    @for (candidate of candidates; track candidate) {
+      <mat-option [value]="candidate.userId">{{candidate.userId}}</mat-option>
+    }
+  </mat-select>
+</mat-form-field>

@@ -38,7 +38,8 @@ export class SeniorCandidateComponent implements OnInit {
   ratingForm: FormGroup = new FormGroup({});
   isFormValid: boolean = false;
 
-  constructor(private ratingCardApiService: RatingCardApiService, private cdRef: ChangeDetectorRef) {}
+  constructor(private ratingCardApiService: RatingCardApiService,
+              private cdRef: ChangeDetectorRef) {}
 
   ngOnInit() {
   this.cdRef.detach();

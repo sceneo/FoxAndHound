@@ -6,12 +6,13 @@ import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatSliderModule, MatSliderThumb} from '@angular/material/slider';
+import {MatSliderModule} from '@angular/material/slider';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ContentService} from '../content/content.service';
 import {CategoryArrangement} from '../models/category-arrangement.interface';
 import {RatingCard} from '../models/rating-card.interface';
-import {Category} from '../models/category.enum'; // Reactive forms
+import {Category} from '../models/category.enum';
+import {RatingSliderComponent} from '../rating-slider/rating-slider.component'; // Reactive forms
 
 @Component({
   selector: 'app-root',
@@ -24,9 +25,9 @@ import {Category} from '../models/category.enum'; // Reactive forms
     MatButtonModule,
     MatInputModule,
     MatFormFieldModule,
-    MatSliderModule,
     ReactiveFormsModule,
-    FormsModule
+    FormsModule,
+    RatingSliderComponent
   ],
   providers: [RatingCardApiService],
   standalone: true
@@ -65,9 +66,13 @@ export class SeniorCandidateComponent implements OnInit {
     });
 
     this.ratingForm = new FormGroup(controls);  // Assign FormGroup after initialization
+
+    // TODO: use unsubscribe
+    /**
     this.ratingForm.valueChanges.subscribe(() => {
       this.isFormValid = this.ratingForm?.valid;
     })
+      **/
   }
 
   getArrangements(): CategoryArrangement[] {
@@ -91,6 +96,13 @@ export class SeniorCandidateComponent implements OnInit {
       console.log(this.ratingForm?.value);  // Logs all form values (responses and ratings)
     } else {
       window.alert('Form is invalid.');
+    }
+  }
+
+  updateRating(rating: number, cardId: string): void {
+    const control = this.ratingForm.get(`rating_${cardId}`);
+    if (control) {
+      control.setValue(rating);
     }
   }
 }

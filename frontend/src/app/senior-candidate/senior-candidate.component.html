@@ -9,10 +9,7 @@
             <mat-form-field>
               <textarea matInput [formControlName]="'response_' + ratingCard.id" placeholder="Your answer"></textarea>
             </mat-form-field>
-
-            <mat-form-field>
-              <textarea matInput [formControlName]="'rating_' + ratingCard.id" placeholder="Your answer"></textarea>
-            </mat-form-field>
+            <app-rating-slider (ratingChange)="updateRating($event, ratingCard.id)"></app-rating-slider>
           </div>
         </div>
       </ng-container>

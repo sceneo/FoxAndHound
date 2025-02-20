@@ -6,7 +6,6 @@ import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatSliderModule} from '@angular/material/slider';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ContentService} from '../content/content.service';
 import {CategoryArrangement} from '../models/category-arrangement.interface';
@@ -59,8 +58,8 @@ export class SeniorCandidateComponent implements OnInit {
   }
 
   initializeForm() {
-    const controls: Record<string, FormControl> = {}; // Accumulator for controls
-
+    const controls: Record<string, FormControl> = {};
+    controls[`email`] = new FormControl("", [Validators.required]);
     this.ratingCards.forEach((card) => {
       controls[`response_${card.id}`] = new FormControl(card.response || "", [Validators.required]);
       controls[`rating_${card.id}`] = new FormControl(card.rating || 0, [Validators.required]);
@@ -69,11 +68,6 @@ export class SeniorCandidateComponent implements OnInit {
     this.ratingForm = new FormGroup(controls);  // Assign FormGroup after initialization
 
     // TODO: use unsubscribe
-    /**
-    this.ratingForm.valueChanges.subscribe(() => {
-      this.isFormValid = this.ratingForm?.valid;
-    })
-      **/
   }
 
   getArrangements(): CategoryArrangement[] {

@@ -13,8 +13,13 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
   },
   {
-    path: "employer",
-    loadComponent: () => import('./employer/employer.component').then(m => m.EmployerComponent),
+    path: "hr",
+    loadComponent: () => import('./hr/hr.component').then(m => m.HrComponent),
+    canActivate: [AuthGuard],
+  },
+  {
+    path: "management",
+    loadComponent: () => import('./management-dashboard/management-dashboard.component').then(m => m.ManagementDashboardComponent),
     canActivate: [AuthGuard],
   },
   {

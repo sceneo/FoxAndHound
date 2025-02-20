@@ -1,4 +1,7 @@
 <form [formGroup]="ratingForm" (ngSubmit)="onSubmit()">
+    <mat-form-field>
+      <input matInput [formGroupName]="'email'" placeholder="Your email"/>
+    </mat-form-field>
     <ng-container *ngFor="let categoryArrangement of getArrangements(); let catIndex = index">
       <h2>{{ categoryArrangement.name }}</h2>
       <ng-container *ngFor="let ratingCard of categoryArrangement.ratingCards; let index = index">

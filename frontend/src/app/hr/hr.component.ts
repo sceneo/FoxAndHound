@@ -12,11 +12,11 @@ import {CandidateDto} from './model/candidateDto';
     MatOption
   ],
   providers: [CandidateApiService],
-  templateUrl: './employer.component.html',
+  templateUrl: './hr.component.html',
   standalone: true,
-  styleUrl: './employer.component.scss'
+  styleUrl: './hr.component.scss'
 })
-export class EmployerComponent {
+export class HrComponent {
 
   candidates: CandidateDto[] = [
     {userId: "UserIdHardcoded_1"},

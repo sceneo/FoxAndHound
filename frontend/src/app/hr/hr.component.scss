@@ -1,0 +1,35 @@
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 20px 20px 20px 20px
+}
+
+.rating-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+
+  .question {
+    flex: 2;
+    font-weight: bold;
+  }
+
+  .inputs {
+    display: flex;
+    flex: 3;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .text-response-field {
+    flex: 2;
+  }
+}
+.button-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+

@@ -2,7 +2,34 @@
 <mat-form-field>
   <mat-select>
     @for (candidate of candidates; track candidate) {
-      <mat-option [value]="candidate.userId">{{candidate.userId}}</mat-option>
+      <mat-option [value]="candidate.email">{{candidate.email}}</mat-option>
     }
   </mat-select>
 </mat-form-field>
+
+<p>toggle "hide candidate answers</p>
+
+<form [formGroup]="ratingForm" (ngSubmit)="onSubmit()">
+  <ng-container *ngFor="let categoryArrangement of getArrangements(); let catIndex = index">
+    <h2>{{ categoryArrangement.name }}</h2>
+    <ng-container *ngFor="let ratingCard of categoryArrangement.ratingCards; let index = index">
+      <div class="rating-card">
+        <p class="question">{{ ratingCard.question }}</p>
+        <p>answer candidate</p>
+        <p>rating candidate</p>
+        <p>rating regarding to rest from candidate</p>
+
+        <div class="inputs">
+          <mat-form-field>
+            <textarea matInput [formControlName]="'response_' + ratingCard.id" placeholder="Your answer"></textarea>
+          </mat-form-field>
+          <app-rating-slider (ratingChange)="updateRating($event, ratingCard.id)"></app-rating-slider>
+        </div>
+      </div>
+    </ng-container>
+  </ng-container>
+
+  <div class="button-group">
+    <button mat-raised-button color="accent" [disabled]="!isFormValid" (click)="onSubmit()">Submit</button>
+  </div>
+</form>

@@ -43,18 +43,18 @@ export class SeniorCandidateComponent implements OnInit {
   ngOnInit() {
   this.cdRef.detach();
   this.isLoading = true;
-    this.ratingCardApiService
-      .getRatingCards()
-      .subscribe((ratingCardDtos: RatingCardDto[]) => {
-        this.ratingCards = ratingCardDtos.map(dto => ({
-          ...dto,
-          rating: 0,
-          response: ''
-        }));
-        this.isLoading = false;
-          this.initializeForm();
-          this.cdRef.detectChanges();
-      });
+  this.ratingCardApiService
+    .getRatingCards()
+    .subscribe((ratingCardDtos: RatingCardDto[]) => {
+      this.ratingCards = ratingCardDtos.map(dto => ({
+        ...dto,
+        rating: 0,
+        response: ''
+      }));
+      this.isLoading = false;
+        this.initializeForm();
+        this.cdRef.detectChanges();
+    });
   }
 
   initializeForm() {
@@ -87,7 +87,7 @@ export class SeniorCandidateComponent implements OnInit {
 
   onSubmit(): void {
     if (this.isFormValid) {
-      window.alert('Form submitted');
+      window.alert('Form submitted from candidate side');
       console.log(this.ratingForm?.value);  // Logs all form values (responses and ratings)
     } else {
       window.alert('Form is invalid.');

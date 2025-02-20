@@ -1,5 +1,5 @@
 
 
 export interface CandidateDto {
-  userId: string;
+  email: string;
 }

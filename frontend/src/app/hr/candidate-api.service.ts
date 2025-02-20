@@ -1,7 +1,6 @@
 import {Injectable} from '@angular/core';
 import {CandidateDto} from './model/candidateDto';
 import {HttpClient} from '@angular/common/http';
-import {RatingCardDto} from '../models/rating-card-dto.interface';
 import {Observable} from 'rxjs';
 
 

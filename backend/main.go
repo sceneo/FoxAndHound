@@ -1,18 +1,23 @@
 package main
 
 import (
+	"backend/api"
+	"backend/config"
+	"backend/middlewares"
 	"log"
-	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	mux := http.NewServeMux()
-	mux.HandleFunc("/api/rating-cards", getRatingCardDtoObject)
-	mux.HandleFunc("/api/candidates", getAllCandidatesDtoObject)
-	mux.HandleFunc("/api/candidates/{userID}/candidate-answers", getCandidateAnswersDtoObject)
-	mux.HandleFunc("/api/rating-cards/save", saveRatingData)
-	handler := enableCORS(mux)
+	db := config.ConnectDatabase()
+	defer db.DB()
 
-	log.Println("The train has no break! Fox and hound is on its way. Ordering beers already...")
-	log.Fatal(http.ListenAndServe(":8080", handler))
+	router := gin.Default()
+	router.Use(middlewares.EnableCORS())
+
+	api.SetupRoutes(router)
+
+	log.Println("🚀 Server running on http://localhost:8080")
+	log.Fatal(router.Run(":8080"))
 }

@@ -1,0 +1,69 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is a Gin-based API for the Fox \u0026 Hound application.",
+        "title": "Fox \u0026 Hound API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/api",
+    "paths": {
+        "/rating-cards": {
+            "get": {
+                "description": "Retrieves all rating cards from the database",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "rating"
+                ],
+                "summary": "Get all rating cards",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.RatingCard"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "models.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.RatingCard": {
+            "type": "object",
+            "properties": {
+                "category": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "orderId": {
+                    "type": "integer"
+                },
+                "question": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

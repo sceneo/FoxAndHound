@@ -2,37 +2,30 @@ package models
 
 import (
 	"time"
-	"gorm.io/gorm"
 )
 
 type RatingCard struct {
-	gorm.Model
-	ID       string `json:"id" gorm:"primaryKey"`
+	ID       int    `json:"id" gorm:"primaryKey;autoIncrement"`
 	Question string `json:"question"`
 	Category string `json:"category"`
-	OrderId  int32  `json:"orderId"`
+	OrderID  int32  `json:"orderId"`
 }
 
 type Rating struct {
-	gorm.Model
-	UserId                int       `json:"userId"`
-	TimeStamp             time.Time `json:"timeStamp"`
-	RatingCardId          int       `json:"ratingCardId"`
+	ID                    int       `json:"id" gorm:"primaryKey;autoIncrement"`
+	UserEmail             string       `json:"userEmail"`
+	TimeStampCandidate    *time.Time `json:"timeStampCandidate" gorm:"default:null column:timestamp_candidate"`
+	TimeStampEmployer     *time.Time `json:"timeStampEmployer" gorm:"default:null column:timestamp_employer"`
+	RatingCardID          int       `json:"ratingCardId" gorm:"foreignKey:RatingCardID"`
 	RatingCandidate       int       `json:"ratingCandidate"`
 	TextResponseCandidate string    `json:"textResponseCandidate"`
+	RatingEmployer        int       `json:"ratingEmployer"`
+	TextResponseEmployer  string    `json:"textResponseEmployer"`
 }
 
 // RatingRequest struct for handling JSON input
 type RatingRequest struct {
-	UserId    int      `json:"userId"`
+	UserEmail    string      `json:"userEmail"`
 	TimeStamp string   `json:"timeStamp"`
 	Ratings   []Rating `json:"ratings"`
-}
-
-// TotalRating model for aggregated results
-type TotalRating struct {
-	gorm.Model
-	RatingCardId     int     `json:"ratingCardId"`
-	AverageRating    float64 `json:"averageRating"`
-	TotalSubmissions int     `json:"totalSubmissions"`
 }

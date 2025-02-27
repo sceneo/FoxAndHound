@@ -5,7 +5,6 @@ import (
 	"log"
 	"os"
 
-	"backend/models"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"github.com/joho/godotenv"
@@ -34,14 +33,6 @@ func ConnectDatabase() *gorm.DB {
 	}
 
 	fmt.Println("✅ Database connected successfully")
-
-	err = db.AutoMigrate(
-		&models.RatingCard{},
-	)
-	if err != nil {
-		log.Fatal("❌ Failed to migrate database schema:", err)
-	}
-	fmt.Println("✅ Database migration completed successfully")
 
 	DB = db
 	return db

@@ -3,15 +3,21 @@ package repository
 import (
 	"backend/config"
 	"backend/models"
-	"log"
+	"context"
 )
 
-func GetRatingCards() ([]models.RatingCard, error) {
+func GetRatingCards(ctx context.Context) ([]models.RatingCard, error) {
 	var ratingCards []models.RatingCard
-	result := config.DB.Find(&ratingCards)
+
+	result := config.DB.WithContext(ctx).Find(&ratingCards)
+
 	if result.Error != nil {
-		log.Println("❌ Error fetching rating cards:", result.Error)
 		return nil, result.Error
 	}
+
+	if result.RowsAffected == 0 {
+		return nil, nil
+	}
+
 	return ratingCards, nil
 }

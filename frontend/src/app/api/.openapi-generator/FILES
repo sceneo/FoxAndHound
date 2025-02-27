@@ -8,6 +8,7 @@ encoder.ts
 git_push.sh
 index.ts
 model/models.ts
+model/modelsCandidateRatingDTO.ts
 model/modelsErrorResponse.ts
 model/modelsRatingCard.ts
 param.ts

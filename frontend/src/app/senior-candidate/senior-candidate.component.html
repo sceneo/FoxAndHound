@@ -1,22 +1,22 @@
 <form [formGroup]="ratingForm" (ngSubmit)="onSubmit()">
-    <mat-form-field>
-      <input matInput [formGroupName]="'email'" placeholder="Your email"/>
-    </mat-form-field>
-    <ng-container *ngFor="let categoryArrangement of getArrangements(); let catIndex = index">
-      <h2>{{ categoryArrangement.name }}</h2>
-      <ng-container *ngFor="let ratingCard of categoryArrangement.ratingCards; let index = index">
-        <div class="rating-card">
-          <p class="question">{{ ratingCard.question }}</p>
+  <mat-form-field>
+    <input matInput [formGroupName]="'email'" placeholder="Your email"/>
+  </mat-form-field>
+  <ng-container *ngFor="let category of categories">
+    <h2>{{ category }}</h2>
+    <ng-container *ngFor="let rating of getRatingsOfCategory(category); let index = index">
+      <div class="rating-card">
+        <p class="question">{{ rating.question }}</p>
 
-          <div class="inputs">
-            <mat-form-field>
-              <textarea matInput [formControlName]="'response_' + ratingCard.id" placeholder="Your answer"></textarea>
-            </mat-form-field>
-            <app-rating-slider (ratingChange)="updateRating($event, ratingCard.id)"></app-rating-slider>
-          </div>
+        <div class="inputs">
+          <mat-form-field>
+            <textarea matInput [formControlName]="'response_' + rating.ratingCardId" placeholder="Your answer"></textarea>
+          </mat-form-field>
+          <app-rating-slider (ratingChange)="updateRating($event, rating.ratingCardId)"></app-rating-slider>
         </div>
-      </ng-container>
+      </div>
     </ng-container>
+  </ng-container>
 
     <div class="button-group">
       <button mat-raised-button color="accent" [disabled]="!isFormValid" (click)="onSubmit()">Submit</button>

@@ -5,11 +5,8 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
-import {ContentService} from '../content/content.service';
-import {CategoryArrangement} from '../models/category-arrangement.interface';
-import {Category} from '../models/category.enum';
 import {RatingSliderComponent} from '../rating-slider/rating-slider.component'; // Reactive forms
-import { ModelsRatingCard, RatingService } from '../api';
+import { ModelsCandidateRatingDTO, RatingService } from '../api';
 
 @Component({
   selector: 'app-root',
@@ -29,16 +26,19 @@ import { ModelsRatingCard, RatingService } from '../api';
 })
 export class SeniorCandidateComponent implements OnInit {
   isLoading: boolean = false;
-  ratingCards: ModelsRatingCard[] = [];
+  candidateRatings: ModelsCandidateRatingDTO[] = [];
   ratingForm: FormGroup = new FormGroup({});
   isFormValid: boolean = false;
+  categories: string[] = [];
 
   constructor(private ratingCardService: RatingService) {}
 
   ngOnInit() {
     this.isLoading = true;
-    this.ratingCardService.ratingCardsGet().subscribe((ratingCardDtos: ModelsRatingCard[]) => {
-      this.ratingCards = ratingCardDtos;
+    // TODO: Here the mail of the logged in user needs to be set... since no auth till yet auto set to next senior :-)
+    this.ratingCardService.ratingsCandidateGet("thomas.lederer@prodyna.com").subscribe((ratingCardDtos: ModelsCandidateRatingDTO[]) => {
+      this.candidateRatings = ratingCardDtos;
+      this.categories = [...new Set(ratingCardDtos.map(rating => String(rating.category)))];
       this.isLoading = false;
       this.initializeForm();
     });
@@ -47,9 +47,9 @@ export class SeniorCandidateComponent implements OnInit {
   initializeForm() {
     const controls: Record<string, FormControl> = {};
     controls[`email`] = new FormControl("", [Validators.required, Validators.email]);
-    this.ratingCards.forEach((card) => {
-      controls[`response_${card.id}`] = new FormControl("", [Validators.required]);
-      controls[`rating_${card.id}`] = new FormControl(0, [Validators.required]);
+    this.candidateRatings.forEach((rating) => {
+      controls[`response_${rating.ratingCardId}`] = new FormControl(rating.textResponseCandidate || "", [Validators.required]);
+      controls[`rating_${rating.ratingCardId}`] = new FormControl(rating.ratingCandidate || 0, [Validators.required]);
     });
 
     this.ratingForm = new FormGroup(controls);  // Assign FormGroup after initialization
@@ -57,18 +57,10 @@ export class SeniorCandidateComponent implements OnInit {
     // TODO: use unsubscribe
   }
 
-  getArrangements(): CategoryArrangement[] {
-    return ContentService.getCategoryArrangement().map(arrangement => {
-      return {
-        ...arrangement,
-        ratingCards: this.getCategoryFilteredCards(arrangement.category)
-      };
-    }).filter(arrangement => arrangement.ratingCards.length > 0);
-  }
 
-  private getCategoryFilteredCards(category: Category): ModelsRatingCard[] {
-    return this.ratingCards.filter(
-      card => card.category === category
+  getRatingsOfCategory(category: string): ModelsCandidateRatingDTO[] {
+    return this.candidateRatings.filter(
+      rating => rating.category === category
     );
   }
 

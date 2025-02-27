@@ -43,9 +43,76 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/ratings/candidate": {
+            "get": {
+                "description": "Fetches rating cards and enriches them with existing ratings for a given user",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "rating"
+                ],
+                "summary": "Get candidate ratings",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User Email",
+                        "name": "userEmail",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.CandidateRatingDTO"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "models.CandidateRatingDTO": {
+            "type": "object",
+            "properties": {
+                "category": {
+                    "type": "string"
+                },
+                "orderId": {
+                    "type": "integer"
+                },
+                "question": {
+                    "type": "string"
+                },
+                "ratingCandidate": {
+                    "type": "integer"
+                },
+                "ratingCardId": {
+                    "type": "integer"
+                },
+                "textResponseCandidate": {
+                    "type": "string"
+                },
+                "timeStampCandidate": {
+                    "type": "string"
+                },
+                "userEmail": {
+                    "type": "string"
+                }
+            }
+        },
         "models.ErrorResponse": {
             "type": "object",
             "properties": {

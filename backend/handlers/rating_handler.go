@@ -25,6 +25,31 @@ func GetRatingCards(c *gin.Context) {
 	c.JSON(http.StatusOK, data)
 }
 
+// GetCandidateRatings godoc
+// @Summary Get candidate ratings
+// @Description Fetches rating cards and enriches them with existing ratings for a given user
+// @Tags rating
+// @Produce json
+// @Param userEmail query string true "User Email"
+// @Success 200 {array} models.CandidateRatingDTO
+// @Failure 500 {object} models.ErrorResponse
+// @Router /ratings/candidate [get]
+func GetCandidateRatings(c *gin.Context) {
+	userEmail := c.Query("userEmail")
+	if userEmail == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "userEmail is required"})
+		return
+	}
+
+	ratings, err := repository.GetCandidateRatings(c.Request.Context(), userEmail)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch candidate ratings"})
+		return
+	}
+
+	c.JSON(http.StatusOK, ratings)
+}
+
 // POST /api/ratings/save
 func SaveRatingRequest(c *gin.Context) {
 	var ratingRequest models.RatingRequest

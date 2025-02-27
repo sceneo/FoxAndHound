@@ -2,17 +2,11 @@ import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {CandidateApiService} from './candidate-api.service';
 import {MatFormField, MatFormFieldModule} from '@angular/material/form-field';
 import {MatOption, MatSelect} from '@angular/material/select';
-import {CandidateDto} from './model/candidateDto';
-import {RatingCardDto} from '../models/rating-card-dto.interface';
-import {RatingCard} from '../models/rating-card.interface';
 import {MatButton, MatButtonModule} from '@angular/material/button';
 import {MatInput, MatInputModule} from '@angular/material/input';
 import {CommonModule, NgForOf} from '@angular/common';
 import {RatingSliderComponent} from '../rating-slider/rating-slider.component';
 import {FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {CategoryArrangement} from '../models/category-arrangement.interface';
-import {ContentService} from '../content/content.service';
-import {Category} from '../models/category.enum';
 import {MatIconModule} from '@angular/material/icon';
 
 @Component({

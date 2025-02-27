@@ -4,7 +4,6 @@ import (
 	"backend/config"
 	"backend/models"
 	"context"
-	"fmt"
 	"log"
 	"sort"
 	"time"
@@ -54,27 +53,49 @@ func GetCandidateRatings(ctx context.Context, userEmail string) ([]models.Candid
 	return candidateRatings, nil
 }
 
-func SaveCandidateRatings(ratingRequest models.RatingRequest) error {
-	timestamp, err := time.Parse(time.RFC3339, ratingRequest.TimeStamp)
-	if err != nil {
-		return fmt.Errorf("invalid timestamp format: %v", err)
-	}
+func SaveCandidateRatings(ctx context.Context, candidateRatings []models.CandidateRatingDTO) error {
+	tx := config.DB.WithContext(ctx).Begin()
 
-	tx := config.DB.Begin()
+	for _, dto := range candidateRatings {
+		var rating models.Rating
+		result := tx.Where("user_email = ? AND rating_card_id = ?", dto.UserEmail, dto.RatingCardID).First(&rating)
 
-	for _, rating := range ratingRequest.Ratings {
-		rating.TimeStampCandidate = &timestamp
-		rating.UserEmail = ratingRequest.UserEmail
+		currentTime := time.Now()
 
-		if err := tx.Create(&rating).Error; err != nil {
-			tx.Rollback()
-			return fmt.Errorf("error saving rating: %v", err)
+		if result.RowsAffected > 0 {
+			log.Printf("🔄 Updating rating for user: %s, card: %d\n", dto.UserEmail, dto.RatingCardID)
+
+			err := tx.Model(&rating).Updates(models.Rating{
+				RatingCandidate:     *dto.RatingCandidate,
+				TextResponseCandidate: *dto.TextResponseCandidate,
+				TimeStampCandidate:  &currentTime,
+			}).Error
+
+			if err != nil {
+				tx.Rollback()
+				log.Println("❌ Error updating rating:", err)
+				return err
+			}
+
+		} else {
+			log.Printf("🆕 Creating new rating for user: %s, card: %d\n", dto.UserEmail, dto.RatingCardID)
+
+			newRating := models.Rating{
+				UserEmail:            dto.UserEmail,
+				RatingCardID:         dto.RatingCardID,
+				RatingCandidate:      *dto.RatingCandidate,
+				TextResponseCandidate: *dto.TextResponseCandidate,
+				TimeStampCandidate:   &currentTime,
+			}
+
+			err := tx.Create(&newRating).Error
+			if err != nil {
+				tx.Rollback()
+				log.Println("❌ Error creating new rating:", err)
+				return err
+			}
 		}
 	}
 
-	if err := tx.Commit().Error; err != nil {
-		return fmt.Errorf("error committing transaction: %v", err)
-	}
-
-	return nil
+	return tx.Commit().Error
 }

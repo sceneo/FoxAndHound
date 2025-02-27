@@ -5,6 +5,6 @@
   showTickMarks
   discrete
   [displayWith]="formatLabel">
-  <input matSliderThumb (valueChange)="updateRating($event)">
+  <input matSliderThumb [value]="selectedValue" (valueChange)="updateRating($event)">
 </mat-slider>
-<p>{{result}}</p>
+<p>{{ result }}</p>

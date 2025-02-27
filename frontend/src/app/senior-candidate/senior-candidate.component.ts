@@ -27,16 +27,15 @@ import { ModelsCandidateRatingDTO, RatingService } from '../api';
 export class SeniorCandidateComponent implements OnInit {
   isLoading: boolean = false;
   candidateRatings: ModelsCandidateRatingDTO[] = [];
-  ratingForm: FormGroup = new FormGroup({});
-  isFormValid: boolean = false;
+  ratingForm!: FormGroup;
   categories: string[] = [];
 
-  constructor(private ratingCardService: RatingService) {}
+  constructor(private ratingService: RatingService) {}
 
   ngOnInit() {
     this.isLoading = true;
     // TODO: Here the mail of the logged in user needs to be set... since no auth till yet auto set to next senior :-)
-    this.ratingCardService.ratingsCandidateGet("thomas.lederer@prodyna.com").subscribe((ratingCardDtos: ModelsCandidateRatingDTO[]) => {
+    this.ratingService.ratingsCandidateGet("thomas.lederer@prodyna.com").subscribe((ratingCardDtos: ModelsCandidateRatingDTO[]) => {
       this.candidateRatings = ratingCardDtos;
       this.categories = [...new Set(ratingCardDtos.map(rating => String(rating.category)))];
       this.isLoading = false;
@@ -65,18 +64,14 @@ export class SeniorCandidateComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.isFormValid) {
-      window.alert('Form submitted from candidate side');
-      console.log(this.ratingForm?.value);  // Logs all form values (responses and ratings)
-    } else {
-      window.alert('Form is invalid.');
-    }
-  }
+    const formValues = this.ratingForm.getRawValue();
+  
+    const updatedRatings: ModelsCandidateRatingDTO[] = this.candidateRatings.map(rating => ({
+      ...rating,
+      textResponseCandidate: formValues[`response_${rating.ratingCardId}`],
+      ratingCandidate: formValues[`rating_${rating.ratingCardId}`]
+    }));
 
-  updateRating(rating: number, cardId: number | undefined): void {
-    const control = this.ratingForm.get(`rating_${cardId}`);
-    if (control) {
-      control.setValue(rating);
-    }
+    this.ratingService.ratingsCandidatePost(updatedRatings).subscribe();
   }
 }

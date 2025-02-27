@@ -14,8 +14,8 @@ type RatingCard struct {
 type Rating struct {
 	ID                    int       `json:"id" gorm:"primaryKey;autoIncrement"`
 	UserEmail             string       `json:"userEmail"`
-	TimeStampCandidate    *time.Time `json:"timeStampCandidate" gorm:"default:null column:timestamp_candidate"`
-	TimeStampEmployer     *time.Time `json:"timeStampEmployer" gorm:"default:null column:timestamp_employer"`
+	TimeStampCandidate    *time.Time `json:"timeStampCandidate" gorm:"default:null"`
+	TimeStampEmployer     *time.Time `json:"timeStampEmployer" gorm:"default:null"`
 	RatingCardID          int       `json:"ratingCardId" gorm:"foreignKey:RatingCardID"`
 	RatingCandidate       int       `json:"ratingCandidate"`
 	TextResponseCandidate string    `json:"textResponseCandidate"`

@@ -50,22 +50,29 @@ func GetCandidateRatings(c *gin.Context) {
 	c.JSON(http.StatusOK, ratings)
 }
 
-// POST /api/ratings/save
-func SaveRatingRequest(c *gin.Context) {
-	var ratingRequest models.RatingRequest
+// SaveCandidateRatings godoc
+// @Summary Save candidate ratings
+// @Description Stores or updates candidate ratings in the database
+// @Tags rating
+// @Accept json
+// @Produce json
+// @Param ratings body []models.CandidateRatingDTO true "List of candidate ratings"
+// @Success 201 {object} map[string]string "message: Ratings saved successfully"
+// @Failure 400 {object} models.ErrorResponse "Invalid request payload"
+// @Failure 500 {object} models.ErrorResponse "Failed to save ratings"
+// @Router /ratings/candidate [post]
+func SaveCandidateRatings(c *gin.Context) {
+	var ratings []models.CandidateRatingDTO
+    if err := c.ShouldBindJSON(&ratings); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload"})
+        return
+    }
 
-	// Parse JSON body
-	if err := c.ShouldBindJSON(&ratingRequest); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request format"})
-		return
-	}
+    err := repository.SaveCandidateRatings(c.Request.Context(), ratings)
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save ratings"})
+        return
+    }
 
-	// Save candidate ratings
-	err := repository.SaveCandidateRatings(ratingRequest)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save candidate ratings"})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{"message": "Ratings saved successfully"})
+    c.JSON(http.StatusCreated, gin.H{"message": "Ratings saved successfully"})
 }

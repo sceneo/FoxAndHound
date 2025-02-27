@@ -87,4 +87,37 @@ paths:
       summary: Get candidate ratings
       tags:
       - rating
+    post:
+      consumes:
+      - application/json
+      description: Stores or updates candidate ratings in the database
+      parameters:
+      - description: List of candidate ratings
+        in: body
+        name: ratings
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.CandidateRatingDTO'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: 'message: Ratings saved successfully'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid request payload
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Failed to save ratings
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Save candidate ratings
+      tags:
+      - rating
 swagger: "2.0"

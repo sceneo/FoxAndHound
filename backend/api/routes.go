@@ -13,6 +13,6 @@ func SetupRoutes(router *gin.Engine) {
 
 		api.GET("/ratings/candidate", handlers.GetCandidateRatings)
 		
-		api.POST("/ratings/save", handlers.SaveRatingRequest)
+		api.POST("/ratings/candidate", handlers.SaveCandidateRatings)
 	}
 }

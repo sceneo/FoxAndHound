@@ -11,8 +11,8 @@ CREATE TABLE IF NOT EXISTS rating_cards (
 CREATE TABLE ratings (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_email VARCHAR(255) NOT NULL,
-    timestamp_candidate DATETIME NULL,
-    timestamp_employer DATETIME NULL,
+    time_stamp_candidate DATETIME NULL,
+    time_stamp_employer DATETIME NULL,
     rating_card_id INT NOT NULL,
     rating_candidate INT NOT NULL,
     text_response_candidate TEXT,

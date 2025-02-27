@@ -1,6 +1,6 @@
-<form [formGroup]="ratingForm" (ngSubmit)="onSubmit()">
+<form *ngIf="ratingForm" [formGroup]="ratingForm" (ngSubmit)="onSubmit()">
   <mat-form-field>
-    <input matInput [formGroupName]="'email'" placeholder="Your email"/>
+    <input matInput formControlName="email" placeholder="Your email"/>
   </mat-form-field>
   <ng-container *ngFor="let category of categories">
     <h2>{{ category }}</h2>
@@ -12,13 +12,13 @@
           <mat-form-field>
             <textarea matInput [formControlName]="'response_' + rating.ratingCardId" placeholder="Your answer"></textarea>
           </mat-form-field>
-          <app-rating-slider (ratingChange)="updateRating($event, rating.ratingCardId)"></app-rating-slider>
+          <app-rating-slider [formControlName]="'rating_' + rating.ratingCardId"></app-rating-slider>
         </div>
       </div>
     </ng-container>
   </ng-container>
 
-    <div class="button-group">
-      <button mat-raised-button color="accent" [disabled]="!isFormValid" (click)="onSubmit()">Submit</button>
-    </div>
+  <div class="button-group">
+    <button mat-raised-button color="accent" [disabled]="!ratingForm.valid">Submit</button>
+  </div>
 </form>

@@ -22,7 +22,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "rating"
+                    "rating-card"
                 ],
                 "summary": "Get all rating cards",
                 "responses": {
@@ -131,6 +131,44 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/ratings/employer": {
+            "get": {
+                "description": "Fetches rating cards and enriches them with existing ratings for a given user",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "rating"
+                ],
+                "summary": "Get candidate ratings for employer",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User Email",
+                        "name": "userEmail",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.EmployerRatingDTO"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -156,6 +194,44 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "timeStampCandidate": {
+                    "type": "string"
+                },
+                "userEmail": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.EmployerRatingDTO": {
+            "type": "object",
+            "properties": {
+                "category": {
+                    "type": "string"
+                },
+                "orderId": {
+                    "type": "integer"
+                },
+                "question": {
+                    "type": "string"
+                },
+                "ratingCandidate": {
+                    "type": "integer"
+                },
+                "ratingCardId": {
+                    "type": "integer"
+                },
+                "ratingEmployer": {
+                    "type": "integer"
+                },
+                "textResponseCandidate": {
+                    "type": "string"
+                },
+                "textResponseEmployer": {
+                    "type": "string"
+                },
+                "timeStampCandidate": {
+                    "type": "string"
+                },
+                "timeStampEmployer": {
                     "type": "string"
                 },
                 "userEmail": {

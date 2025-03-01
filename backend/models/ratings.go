@@ -22,10 +22,3 @@ type Rating struct {
 	RatingEmployer        int       `json:"ratingEmployer"`
 	TextResponseEmployer  string    `json:"textResponseEmployer"`
 }
-
-// RatingRequest struct for handling JSON input
-type RatingRequest struct {
-	UserEmail    string      `json:"userEmail"`
-	TimeStamp string   `json:"timeStamp"`
-	Ratings   []Rating `json:"ratings"`
-}

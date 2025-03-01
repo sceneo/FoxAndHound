@@ -1,29 +1,12 @@
 package handlers
 
 import (
-	"backend/repository"
+	"backend/services"
 	"net/http"
 	"backend/models"
 
 	"github.com/gin-gonic/gin"
 )
-
-// GetRatingCards godoc
-// @Summary Get all rating cards
-// @Description Retrieves all rating cards from the database
-// @Tags rating
-// @Produce json
-// @Success 200 {array} models.RatingCard
-// @Failure 500 {object} models.ErrorResponse
-// @Router /rating-cards [get]
-func GetRatingCards(c *gin.Context) {
-	data, err := repository.GetRatingCards(c.Request.Context())
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, models.ErrorResponse{Error: "Failed to fetch rating cards"})
-		return
-	}
-	c.JSON(http.StatusOK, data)
-}
 
 // GetCandidateRatings godoc
 // @Summary Get candidate ratings
@@ -41,7 +24,7 @@ func GetCandidateRatings(c *gin.Context) {
 		return
 	}
 
-	ratings, err := repository.GetCandidateRatings(c.Request.Context(), userEmail)
+	ratings, err := services.GetCandidateRatings(c.Request.Context(), userEmail)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch candidate ratings"})
 		return
@@ -68,11 +51,36 @@ func SaveCandidateRatings(c *gin.Context) {
         return
     }
 
-    err := repository.SaveCandidateRatings(c.Request.Context(), ratings)
+    err := services.SaveCandidateRatings(c.Request.Context(), ratings)
     if err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save ratings"})
         return
     }
 
     c.JSON(http.StatusCreated, gin.H{"message": "Ratings saved successfully"})
+}
+
+// GetCandidateRatingsEmployer godoc
+// @Summary Get candidate ratings for employer
+// @Description Fetches rating cards and enriches them with existing ratings for a given user
+// @Tags rating
+// @Produce json
+// @Param userEmail query string true "User Email"
+// @Success 200 {array} models.EmployerRatingDTO
+// @Failure 500 {object} models.ErrorResponse
+// @Router /ratings/employer [get]
+func GetCandidateRatingsEmployer(c *gin.Context) {
+	userEmail := c.Query("userEmail")
+	if userEmail == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "userEmail is required"})
+		return
+	}
+
+	ratings, err := services.GetCandidateRatingsForEmployer(c.Request.Context(), userEmail)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch candidate ratings"})
+		return
+	}
+
+	c.JSON(http.StatusOK, ratings)
 }

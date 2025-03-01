@@ -3,6 +3,7 @@ README.md
 api.module.ts
 api/api.ts
 api/rating.service.ts
+api/ratingCard.service.ts
 configuration.ts
 encoder.ts
 git_push.sh

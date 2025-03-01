@@ -14,5 +14,7 @@ func SetupRoutes(router *gin.Engine) {
 		api.GET("/ratings/candidate", handlers.GetCandidateRatings)
 		
 		api.POST("/ratings/candidate", handlers.SaveCandidateRatings)
+
+		api.GET("/ratings/employer", handlers.GetCandidateRatingsEmployer)
 	}
 }

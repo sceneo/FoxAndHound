@@ -19,6 +19,31 @@ definitions:
       userEmail:
         type: string
     type: object
+  models.EmployerRatingDTO:
+    properties:
+      category:
+        type: string
+      orderId:
+        type: integer
+      question:
+        type: string
+      ratingCandidate:
+        type: integer
+      ratingCardId:
+        type: integer
+      ratingEmployer:
+        type: integer
+      textResponseCandidate:
+        type: string
+      textResponseEmployer:
+        type: string
+      timeStampCandidate:
+        type: string
+      timeStampEmployer:
+        type: string
+      userEmail:
+        type: string
+    type: object
   models.ErrorResponse:
     properties:
       error:
@@ -60,7 +85,7 @@ paths:
             $ref: '#/definitions/models.ErrorResponse'
       summary: Get all rating cards
       tags:
-      - rating
+      - rating-card
   /ratings/candidate:
     get:
       description: Fetches rating cards and enriches them with existing ratings for
@@ -118,6 +143,32 @@ paths:
           schema:
             $ref: '#/definitions/models.ErrorResponse'
       summary: Save candidate ratings
+      tags:
+      - rating
+  /ratings/employer:
+    get:
+      description: Fetches rating cards and enriches them with existing ratings for
+        a given user
+      parameters:
+      - description: User Email
+        in: query
+        name: userEmail
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.EmployerRatingDTO'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Get candidate ratings for employer
       tags:
       - rating
 swagger: "2.0"

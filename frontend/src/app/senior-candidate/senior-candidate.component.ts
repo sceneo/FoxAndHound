@@ -1,23 +1,17 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
-import {RatingCardApiService} from './rating-card-api.service';
-import {RatingCardDto} from '../models/rating-card-dto.interface';
+import {Component, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
-import {ContentService} from '../content/content.service';
-import {CategoryArrangement} from '../models/category-arrangement.interface';
-import {RatingCard} from '../models/rating-card.interface';
-import {Category} from '../models/category.enum';
 import {RatingSliderComponent} from '../rating-slider/rating-slider.component'; // Reactive forms
+import { ModelsCandidateRatingDTO, RatingService } from '../api';
 
 @Component({
   selector: 'app-root',
   templateUrl: './senior-candidate.component.html',
   styleUrls: ['./senior-candidate.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     MatIconModule,
@@ -28,41 +22,33 @@ import {RatingSliderComponent} from '../rating-slider/rating-slider.component'; 
     FormsModule,
     RatingSliderComponent
   ],
-  providers: [RatingCardApiService],
   standalone: true
 })
 export class SeniorCandidateComponent implements OnInit {
   isLoading: boolean = false;
-  ratingCards: RatingCard[] = [];
-  ratingForm: FormGroup = new FormGroup({});
-  isFormValid: boolean = false;
+  candidateRatings: ModelsCandidateRatingDTO[] = [];
+  ratingForm!: FormGroup;
+  categories: string[] = [];
 
-  constructor(private ratingCardApiService: RatingCardApiService,
-              private cdRef: ChangeDetectorRef) {}
+  constructor(private ratingService: RatingService) {}
 
   ngOnInit() {
-  this.cdRef.detach();
-  this.isLoading = true;
-  this.ratingCardApiService
-    .getRatingCards()
-    .subscribe((ratingCardDtos: RatingCardDto[]) => {
-      this.ratingCards = ratingCardDtos.map(dto => ({
-        ...dto,
-        rating: 0,
-        response: ''
-      }));
+    this.isLoading = true;
+    // TODO: Here the mail of the logged in user needs to be set... since no auth till yet auto set to next senior :-)
+    this.ratingService.ratingsCandidateGet("thomas.lederer@prodyna.com").subscribe((ratingCardDtos: ModelsCandidateRatingDTO[]) => {
+      this.candidateRatings = ratingCardDtos;
+      this.categories = [...new Set(ratingCardDtos.map(rating => String(rating.category)))];
       this.isLoading = false;
-        this.initializeForm();
-        this.cdRef.detectChanges();
+      this.initializeForm();
     });
   }
 
   initializeForm() {
     const controls: Record<string, FormControl> = {};
-    controls[`email`] = new FormControl("", [Validators.required]);
-    this.ratingCards.forEach((card) => {
-      controls[`response_${card.id}`] = new FormControl(card.response || "", [Validators.required]);
-      controls[`rating_${card.id}`] = new FormControl(card.rating || 0, [Validators.required]);
+    controls[`email`] = new FormControl("", [Validators.required, Validators.email]);
+    this.candidateRatings.forEach((rating) => {
+      controls[`response_${rating.ratingCardId}`] = new FormControl(rating.textResponseCandidate || "", [Validators.required]);
+      controls[`rating_${rating.ratingCardId}`] = new FormControl(rating.ratingCandidate || 0, [Validators.required]);
     });
 
     this.ratingForm = new FormGroup(controls);  // Assign FormGroup after initialization
@@ -70,34 +56,22 @@ export class SeniorCandidateComponent implements OnInit {
     // TODO: use unsubscribe
   }
 
-  getArrangements(): CategoryArrangement[] {
-    return ContentService.getCategoryArrangement().map(arrangement => {
-      return {
-        ...arrangement,
-        ratingCards: this.getCategoryFilteredCards(arrangement.category)
-      };
-    }).filter(arrangement => arrangement.ratingCards.length > 0);
-  }
 
-  private getCategoryFilteredCards(category: Category): RatingCard[] {
-    return this.ratingCards.filter(
-      card => card.category === category
+  getRatingsOfCategory(category: string): ModelsCandidateRatingDTO[] {
+    return this.candidateRatings.filter(
+      rating => rating.category === category
     );
   }
 
   onSubmit(): void {
-    if (this.isFormValid) {
-      window.alert('Form submitted from candidate side');
-      console.log(this.ratingForm?.value);  // Logs all form values (responses and ratings)
-    } else {
-      window.alert('Form is invalid.');
-    }
-  }
+    const formValues = this.ratingForm.getRawValue();
+  
+    const updatedRatings: ModelsCandidateRatingDTO[] = this.candidateRatings.map(rating => ({
+      ...rating,
+      textResponseCandidate: formValues[`response_${rating.ratingCardId}`],
+      ratingCandidate: formValues[`rating_${rating.ratingCardId}`]
+    }));
 
-  updateRating(rating: number, cardId: string): void {
-    const control = this.ratingForm.get(`rating_${cardId}`);
-    if (control) {
-      control.setValue(rating);
-    }
+    this.ratingService.ratingsCandidatePost(updatedRatings).subscribe();
   }
 }

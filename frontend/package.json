@@ -6,7 +6,8 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "generate-swagger": "curl -o swagger.json http://localhost:8080/swagger/doc.json && openapi-generator-cli generate -i swagger.json -g typescript-angular -o src/app/api -t custom-templates"
   },
   "private": true,
   "dependencies": {

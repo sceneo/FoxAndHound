@@ -1,0 +1,174 @@
+basePath: /api
+definitions:
+  models.CandidateRatingDTO:
+    properties:
+      category:
+        type: string
+      orderId:
+        type: integer
+      question:
+        type: string
+      ratingCandidate:
+        type: integer
+      ratingCardId:
+        type: integer
+      textResponseCandidate:
+        type: string
+      timeStampCandidate:
+        type: string
+      userEmail:
+        type: string
+    type: object
+  models.EmployerRatingDTO:
+    properties:
+      category:
+        type: string
+      orderId:
+        type: integer
+      question:
+        type: string
+      ratingCandidate:
+        type: integer
+      ratingCardId:
+        type: integer
+      ratingEmployer:
+        type: integer
+      textResponseCandidate:
+        type: string
+      textResponseEmployer:
+        type: string
+      timeStampCandidate:
+        type: string
+      timeStampEmployer:
+        type: string
+      userEmail:
+        type: string
+    type: object
+  models.ErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  models.RatingCard:
+    properties:
+      category:
+        type: string
+      id:
+        type: integer
+      orderId:
+        type: integer
+      question:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: This is a Gin-based API for the Fox & Hound application.
+  title: Fox & Hound API
+  version: "1.0"
+paths:
+  /rating-cards:
+    get:
+      description: Retrieves all rating cards from the database
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.RatingCard'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Get all rating cards
+      tags:
+      - rating-card
+  /ratings/candidate:
+    get:
+      description: Fetches rating cards and enriches them with existing ratings for
+        a given user
+      parameters:
+      - description: User Email
+        in: query
+        name: userEmail
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.CandidateRatingDTO'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Get candidate ratings
+      tags:
+      - rating
+    post:
+      consumes:
+      - application/json
+      description: Stores or updates candidate ratings in the database
+      parameters:
+      - description: List of candidate ratings
+        in: body
+        name: ratings
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.CandidateRatingDTO'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: 'message: Ratings saved successfully'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid request payload
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Failed to save ratings
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Save candidate ratings
+      tags:
+      - rating
+  /ratings/employer:
+    get:
+      description: Fetches rating cards and enriches them with existing ratings for
+        a given user
+      parameters:
+      - description: User Email
+        in: query
+        name: userEmail
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.EmployerRatingDTO'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Get candidate ratings for employer
+      tags:
+      - rating
+swagger: "2.0"

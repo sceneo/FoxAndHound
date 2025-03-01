@@ -1,54 +1,65 @@
-import {ChangeDetectorRef, Component, EventEmitter, Output} from '@angular/core';
-import {MatSlider, MatSliderThumb} from '@angular/material/slider';
-import {MatFormField, MatLabel} from '@angular/material/form-field';
+import { Component, forwardRef } from '@angular/core';
+import { MatSliderModule } from '@angular/material/slider';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({
   selector: 'app-rating-slider',
+  standalone: true,
   imports: [
-    MatSlider,
-    MatSliderThumb,
-    MatLabel,
-    MatFormField
+    MatSliderModule,
+    MatFormFieldModule
   ],
   templateUrl: './rating-slider.component.html',
-  standalone: true,
-  styleUrl: './rating-slider.component.scss'
+  styleUrl: './rating-slider.component.scss',
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => RatingSliderComponent),
+      multi: true
+    }
+  ]
 })
-export class RatingSliderComponent {
-
-  @Output()
-  ratingChange = new EventEmitter<number>();
-
+export class RatingSliderComponent implements ControlValueAccessor {
+  selectedValue: number = 0;
   result: string = "";
 
-  constructor(private cdRef: ChangeDetectorRef) {}
+  private onChange = (value: number) => {};
+  private onTouched = () => {};
 
   updateRating(value: number) {
-    this.ratingChange.emit(value);
+    this.selectedValue = value;
     this.result = this.formatTextLabel(value);
-    this.cdRef.detectChanges();
+    this.onChange(value);
+    this.onTouched();
   }
 
-  private formatTextLabel(value: number): string {
-     if (value === 0) {
-     return "not fulfilled"
-     } else if (value === 25) {
-     return "slightly fulfilled"
-     } else if (value === 50) {
-     return "partially fulfilled"
-     } else if (value === 75) {
-     return "mostly fulfilled"
-     } else if (value === 100) {
-     return "fully fulfilled"
-     } else if (value === 125) {
-     return "overly fulfilled"
-     } else {
-     return "not rated"
-     }
+  writeValue(value: number): void {
+    this.selectedValue = value;
+    this.result = this.formatTextLabel(value);
+  }
+
+  registerOnChange(fn: (value: number) => void): void {
+    this.onChange = fn;
+  }
+
+  registerOnTouched(fn: () => void): void {
+    this.onTouched = fn;
+  }
+
+  formatTextLabel(value: number): string {
+    switch (value) {
+      case 0: return "not fulfilled";
+      case 25: return "slightly fulfilled";
+      case 50: return "partially fulfilled";
+      case 75: return "mostly fulfilled";
+      case 100: return "fully fulfilled";
+      case 125: return "overly fulfilled";
+      default: return "not rated";
+    }
   }
 
   formatLabel(value: number): string {
     return `${value} %`;
   }
-
 }

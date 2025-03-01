@@ -51,7 +51,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "rating"
+                    "rating-candidate"
                 ],
                 "summary": "Get candidate ratings",
                 "parameters": [
@@ -90,7 +90,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "rating"
+                    "rating-candidate"
                 ],
                 "summary": "Save candidate ratings",
                 "parameters": [
@@ -139,7 +139,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "rating"
+                    "rating-employer"
                 ],
                 "summary": "Get candidate ratings for employer",
                 "parameters": [
@@ -158,6 +158,85 @@ const docTemplate = `{
                             "type": "array",
                             "items": {
                                 "$ref": "#/definitions/models.EmployerRatingDTO"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Stores or updates candidate ratings of employer in the database",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "rating-employer"
+                ],
+                "summary": "Save employer ratings",
+                "parameters": [
+                    {
+                        "description": "List of candidate ratings",
+                        "name": "ratings",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.EmployerRatingDTO"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "message: Ratings saved successfully",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request payload",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Failed to save ratings",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/ratings/employer/candidates": {
+            "get": {
+                "description": "Fetches rating candidates",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "rating-employer"
+                ],
+                "summary": "Get rating candidates",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
                             }
                         }
                     },

@@ -1,97 +1,97 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
-import {CandidateApiService} from './candidate-api.service';
-import {MatFormField, MatFormFieldModule} from '@angular/material/form-field';
-import {MatOption, MatSelect} from '@angular/material/select';
-import {MatButton, MatButtonModule} from '@angular/material/button';
-import {MatInput, MatInputModule} from '@angular/material/input';
-import {CommonModule, NgForOf} from '@angular/common';
+import {Component, OnInit} from '@angular/core';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatButtonModule} from '@angular/material/button';
+import {MatInputModule} from '@angular/material/input';
+import {CommonModule} from '@angular/common';
 import {RatingSliderComponent} from '../rating-slider/rating-slider.component';
-import {FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatIconModule} from '@angular/material/icon';
+import { ModelsEmployerRatingDTO, RatingEmployerService } from '../api';
+import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 
 @Component({
-  selector: 'app-root',
+  selector: 'app-hr',
+  templateUrl: './hr.component.html',
+  styleUrls: ['./hr.component.scss'],
   imports: [
     CommonModule,
     MatIconModule,
     MatButtonModule,
     MatInputModule,
     MatFormFieldModule,
+    MatSelectModule,
     ReactiveFormsModule,
     FormsModule,
-    RatingSliderComponent,
-    MatSelect,
-    MatOption
+    RatingSliderComponent
   ],
-  providers: [CandidateApiService],
-  templateUrl: './hr.component.html',
-  standalone: true,
-  styleUrl: './hr.component.scss'
+  standalone: true
 })
-export class HrComponent {
-
-  /*candidates: CandidateDto[] = [
-    {email: "test@test.com"},
-    {email: "test@anotherTest.ch"}
-  ]
-
+export class HrComponent implements OnInit {
   isLoading: boolean = false;
-  isFormValid: boolean = false;
-  ratingForm: FormGroup = new FormGroup({});
+  employerRatings: ModelsEmployerRatingDTO[] = [];
+  candidates: string[] = [];
+  categories: string[] = [];
 
-  private ratingCards: RatingCard[] = [];
+  ratingForm: FormGroup | null = null;
+  candidatesForm: FormGroup  = new FormGroup({
+    "userEmail": new FormControl()
+  });
 
-  constructor(private candidateApiService: CandidateApiService, private ratingCardApiService: RatingCardApiService) {
+  private selectedUserMail: string | null = null;
 
-    this.candidateApiService.getCandidates()
-      .subscribe((candidates) => {
-      console.log(candidates);
-      // TODO: load candidates
+  constructor(private ratingService: RatingEmployerService) {}
+
+  ngOnInit() {
+    this.isLoading = true;
+    
+    this.ratingService.ratingsEmployerCandidatesGet().subscribe(users => {
+      this.candidates = users;
+      this.isLoading = false;
     });
+  }
 
-    this.ratingCardApiService
-      .getRatingCards()
-      .subscribe((ratingCardDtos: RatingCardDto[]) => {
-        this.ratingCards = ratingCardDtos.map(dto => ({
-          ...dto,
-          rating: 0,
-          response: ''
-        }));
+  onCandidateChange(event: MatSelectChange): void {
+    this.selectedUserMail = String(event.value);
+
+    this.ratingForm = null;
+    this.isLoading = true;
+
+    this.ratingService.ratingsEmployerGet(this.selectedUserMail)
+      .subscribe(ratings => {
+        this.categories = [...new Set(ratings.map(rating => String(rating.category)))];
+
+        const controls: Record<string, FormControl> = {};
+
+        ratings.forEach((rating) => {
+          controls[`response_candidate_${rating.ratingCardId}`] = new FormControl({ value: rating.textResponseCandidate || "", disabled: true }, []);
+          controls[`rating_candidate_${rating.ratingCardId}`] = new FormControl({ value: rating.ratingCandidate || 0, disabled: true }, []);
+          controls[`response_employer_${rating.ratingCardId}`] = new FormControl(rating.textResponseEmployer || "", [Validators.required]);
+          controls[`rating_employer_${rating.ratingCardId}`] = new FormControl(rating.ratingEmployer || 0, [Validators.required]);
+        });
+        this.ratingForm = new FormGroup(controls);
         this.isLoading = false;
-      });
-
+        this.employerRatings = ratings;
+    });
   }
 
-  getArrangements(): CategoryArrangement[] {
-    return ContentService.getCategoryArrangement().map(arrangement => {
-      return {
-        ...arrangement,
-        ratingCards: this.getCategoryFilteredCards(arrangement.category)
-      };
-    }).filter(arrangement => arrangement.ratingCards.length > 0);
-  }
-
-  private getCategoryFilteredCards(category: Category): RatingCard[] {
-    return this.ratingCards.filter(
-      card => card.category === category
+  getRatingsOfCategory(category: string): ModelsEmployerRatingDTO[] {
+    return this.employerRatings.filter(
+      rating => rating.category === category
     );
   }
 
-  updateRating(rating: number, cardId: string): void {
-    const control = this.ratingForm.get(`rating_${cardId}`);
-    if (control) {
-      control.setValue(rating);
-    }
-  }
-
   onSubmit(): void {
-    if (this.isFormValid) {
-      window.alert('Form submitted from HR side');
-      console.log(this.ratingForm?.value);  // Logs all form values (responses and ratings)
-    } else {
-      window.alert('Form is invalid.');
-    }
-  }*/
+    const formValues = this.ratingForm?.getRawValue();
 
+    const updatedRatings: ModelsEmployerRatingDTO[] = this.employerRatings.map(rating => ({
+      ...rating,
+      textResponseEmployer: formValues[`response_employer_${rating.ratingCardId}`],
+      ratingEmployer: formValues[`rating_employer_${rating.ratingCardId}`]
+    }));
 
+    this.isLoading = true;
+
+    this.ratingService.ratingsEmployerPost(updatedRatings)
+      .subscribe(() => this.isLoading = false);
+  }
 }

@@ -1,5 +1,7 @@
-export * from './rating.service';
-import { RatingService } from './rating.service';
+export * from './ratingCandidate.service';
+import { RatingCandidateService } from './ratingCandidate.service';
 export * from './ratingCard.service';
 import { RatingCardService } from './ratingCard.service';
-export const APIS = [RatingService, RatingCardService];
+export * from './ratingEmployer.service';
+import { RatingEmployerService } from './ratingEmployer.service';
+export const APIS = [RatingCandidateService, RatingCardService, RatingEmployerService];

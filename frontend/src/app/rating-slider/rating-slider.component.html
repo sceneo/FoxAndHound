@@ -4,6 +4,7 @@
   step="25"
   showTickMarks
   discrete
+  [disabled]="isDisabled"
   [displayWith]="formatLabel">
   <input matSliderThumb [value]="selectedValue" (valueChange)="updateRating($event)">
 </mat-slider>

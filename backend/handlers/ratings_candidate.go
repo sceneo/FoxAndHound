@@ -11,7 +11,7 @@ import (
 // GetCandidateRatings godoc
 // @Summary Get candidate ratings
 // @Description Fetches rating cards and enriches them with existing ratings for a given user
-// @Tags rating
+// @Tags rating-candidate
 // @Produce json
 // @Param userEmail query string true "User Email"
 // @Success 200 {array} models.CandidateRatingDTO
@@ -36,7 +36,7 @@ func GetCandidateRatings(c *gin.Context) {
 // SaveCandidateRatings godoc
 // @Summary Save candidate ratings
 // @Description Stores or updates candidate ratings in the database
-// @Tags rating
+// @Tags rating-candidate
 // @Accept json
 // @Produce json
 // @Param ratings body []models.CandidateRatingDTO true "List of candidate ratings"
@@ -58,29 +58,4 @@ func SaveCandidateRatings(c *gin.Context) {
     }
 
     c.JSON(http.StatusCreated, gin.H{"message": "Ratings saved successfully"})
-}
-
-// GetCandidateRatingsEmployer godoc
-// @Summary Get candidate ratings for employer
-// @Description Fetches rating cards and enriches them with existing ratings for a given user
-// @Tags rating
-// @Produce json
-// @Param userEmail query string true "User Email"
-// @Success 200 {array} models.EmployerRatingDTO
-// @Failure 500 {object} models.ErrorResponse
-// @Router /ratings/employer [get]
-func GetCandidateRatingsEmployer(c *gin.Context) {
-	userEmail := c.Query("userEmail")
-	if userEmail == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "userEmail is required"})
-		return
-	}
-
-	ratings, err := services.GetCandidateRatingsForEmployer(c.Request.Context(), userEmail)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch candidate ratings"})
-		return
-	}
-
-	c.JSON(http.StatusOK, ratings)
 }

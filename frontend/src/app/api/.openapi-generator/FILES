@@ -2,14 +2,16 @@
 README.md
 api.module.ts
 api/api.ts
-api/rating.service.ts
+api/ratingCandidate.service.ts
 api/ratingCard.service.ts
+api/ratingEmployer.service.ts
 configuration.ts
 encoder.ts
 git_push.sh
 index.ts
 model/models.ts
 model/modelsCandidateRatingDTO.ts
+model/modelsEmployerRatingDTO.ts
 model/modelsErrorResponse.ts
 model/modelsRatingCard.ts
 param.ts

@@ -63,7 +63,7 @@ func SaveCandidateRatings(ctx context.Context, candidateRatings []models.Candida
 			TimeStampCandidate:   &currentTime,
 		}
 
-		err := repository.SaveOrUpdateCandidateRating(ctx, &rating)
+		err := repository.SaveOrUpdateRating(ctx, &rating, true)
 		if err != nil {
 			log.Println("❌ Error saving candidate rating:", err)
 			return err

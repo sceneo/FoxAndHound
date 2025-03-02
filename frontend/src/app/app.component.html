@@ -1,19 +1,26 @@
-<mat-toolbar color="primary">
+<mat-toolbar color="primary" class="toolbar">
   <button mat-icon-button (click)="toggleMenu()">
-    <mat-icon>menu</mat-icon>
+    <mat-icon class="icon-color">menu</mat-icon>
   </button>
-  <span class="app-title">{{"Senior Suggestion Service"}}</span>
+  <span class="app-title">Senior Suggestion Service</span>
 </mat-toolbar>
 
 <mat-sidenav-container class="sidenav-container">
-  <mat-sidenav #sidenav mode="side" [(opened)]="menuOpen">
+  <mat-sidenav #sidenav mode="side" [(opened)]="menuOpen" class="sidenav">
     <mat-nav-list>
-      <a mat-list-item routerLink="/hr" (click)="closeMenu()">HR</a>
-      <a mat-list-item routerLink="/candidate" (click)="closeMenu()">Candidate</a>
-      <a mat-list-item routerLink="/management" (click)="closeMenu()">Management Dashboard</a>
+      <a class="list-item" mat-list-item routerLink="/hr" (click)="closeMenu()">
+        <span class="item-text">HR</span>
+      </a>
+      <a class="list-item" mat-list-item routerLink="/candidate" (click)="closeMenu()">
+        <span class="item-text">Candidate</span>
+      </a>
+      <a class="list-item" mat-list-item routerLink="/management" (click)="closeMenu()">
+        <span class="item-text">Management Dashboard</span>
+      </a>
     </mat-nav-list>
   </mat-sidenav>
-  <mat-sidenav-content>
+
+  <mat-sidenav-content class="sidenav-content">
     <router-outlet></router-outlet>
   </mat-sidenav-content>
 </mat-sidenav-container>

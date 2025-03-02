@@ -1,32 +1,32 @@
-<form [formGroup]="candidatesForm">
-  <mat-form-field>
+<form [formGroup]="candidatesForm" class="candidate-form">
+  <mat-form-field class="full-width">
     <mat-label>Senior candidate</mat-label>
     <mat-select [disabled]="isLoading" (selectionChange)="onCandidateChange($event)">
       @for (candidate of candidates; track candidate) {
-        <mat-option [value]="candidate">{{candidate}}</mat-option>
+        <mat-option [value]="candidate">{{ candidate }}</mat-option>
       }
     </mat-select>
   </mat-form-field>
 </form>
 
-<form *ngIf="ratingForm" [formGroup]="ratingForm" (ngSubmit)="onSubmit()">
+<form *ngIf="ratingForm" [formGroup]="ratingForm" (ngSubmit)="onSubmit()" class="rating-form">
   <ng-container *ngFor="let category of categories">
-    <h2>{{ category }}</h2>
+    <h2 class="category-title">{{ category }}</h2>
     <ng-container *ngFor="let rating of getRatingsOfCategory(category); let index = index">
+      
       <div class="rating-card">
         <p class="question">{{ rating.question }}</p>
-        <div>Candidates answer</div>
+        <div class="subheading">Candidate's Answer</div>
         <div class="inputs">
-          <mat-form-field>
+          <mat-form-field class="full-width">
             <textarea matInput [formControlName]="'response_candidate_' + rating.ratingCardId"></textarea>
           </mat-form-field>
           <app-rating-slider [formControlName]="'rating_candidate_' + rating.ratingCardId"></app-rating-slider>
         </div>
-      </div>
-      <div class="rating-card">
-        <div>Your answer</div>
+
+        <div class="subheading">Your Answer</div>
         <div class="inputs">
-          <mat-form-field>
+          <mat-form-field class="full-width">
             <textarea matInput [formControlName]="'response_employer_' + rating.ratingCardId" placeholder="Your answer"></textarea>
           </mat-form-field>
           <app-rating-slider [formControlName]="'rating_employer_' + rating.ratingCardId"></app-rating-slider>

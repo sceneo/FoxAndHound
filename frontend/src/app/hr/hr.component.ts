@@ -7,7 +7,9 @@ import {RatingSliderComponent} from '../rating-slider/rating-slider.component';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatIconModule} from '@angular/material/icon';
 import { ModelsEmployerRatingDTO, RatingEmployerService } from '../api';
-import { MatSelectChange, MatSelectModule } from '@angular/material/select';
+import { MatSelectModule } from '@angular/material/select';
+import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { map, Observable, of, startWith, switchMap, tap } from 'rxjs';
 
 @Component({
   selector: 'app-hr',
@@ -19,6 +21,7 @@ import { MatSelectChange, MatSelectModule } from '@angular/material/select';
     MatButtonModule,
     MatInputModule,
     MatFormFieldModule,
+    MatAutocompleteModule,
     MatSelectModule,
     ReactiveFormsModule,
     FormsModule,
@@ -34,24 +37,72 @@ export class HrComponent implements OnInit {
 
   ratingForm: FormGroup | null = null;
   candidatesForm: FormGroup  = new FormGroup({
-    "userEmail": new FormControl()
+    "userEmail": new FormControl("", [Validators.email, Validators.required])
   });
+  filteredCandidates: Observable<string[]> = of([]);
 
   private selectedUserMail: string | null = null;
 
-  constructor(private ratingService: RatingEmployerService) {}
+  constructor(private ratingService: RatingEmployerService) {
+    
+  }
 
   ngOnInit() {
     this.isLoading = true;
     
-    this.ratingService.ratingsEmployerCandidatesGet().subscribe(users => {
-      this.candidates = users;
-      this.isLoading = false;
-    });
+    this.filteredCandidates = this.ratingService.ratingsEmployerCandidatesGet().pipe(
+      tap(users => {
+        this.candidates = users;
+        this.isLoading = false;
+      }),
+      switchMap(() => {
+        const mailControl = this.candidatesForm.controls["userEmail"];
+        return mailControl.valueChanges.pipe(
+          tap(value => this.onMailTextChange(value)),
+          startWith(''),
+          map(value => this._filter(value || ''))
+        );
+      })
+    );
   }
 
-  onCandidateChange(event: MatSelectChange): void {
-    this.selectedUserMail = String(event.value);
+  onCandidateChange(event: MatAutocompleteSelectedEvent): void {
+    this._initializeCandidate(String(event.option.value));
+  }
+
+  getRatingsOfCategory(category: string): ModelsEmployerRatingDTO[] {
+    return this.employerRatings.filter(
+      rating => rating.category === category
+    );
+  }
+
+  onSubmit(): void {
+    const formValues = this.ratingForm?.getRawValue();
+
+    const updatedRatings: ModelsEmployerRatingDTO[] = this.employerRatings.map(rating => ({
+      ...rating,
+      textResponseEmployer: formValues[`response_employer_${rating.ratingCardId}`],
+      ratingEmployer: formValues[`rating_employer_${rating.ratingCardId}`]
+    }));
+
+    this.isLoading = true;
+
+    this.ratingService.ratingsEmployerPost(updatedRatings)
+      .subscribe(() => this.isLoading = false);
+  }
+
+  private onMailTextChange(mailAddress: string): void {
+    const mailControl = this.candidatesForm.controls["userEmail"];
+
+    if (mailControl.valid && mailAddress !== this.selectedUserMail) {
+      this._initializeCandidate(mailAddress);
+    } else if (mailControl.invalid) {
+      this.ratingForm = null;
+    }
+  }
+
+  private _initializeCandidate(mailAddress: string): void {
+    this.selectedUserMail = mailAddress;
 
     this.ratingForm = null;
     this.isLoading = true;
@@ -74,24 +125,11 @@ export class HrComponent implements OnInit {
     });
   }
 
-  getRatingsOfCategory(category: string): ModelsEmployerRatingDTO[] {
-    return this.employerRatings.filter(
-      rating => rating.category === category
-    );
-  }
-
-  onSubmit(): void {
-    const formValues = this.ratingForm?.getRawValue();
-
-    const updatedRatings: ModelsEmployerRatingDTO[] = this.employerRatings.map(rating => ({
-      ...rating,
-      textResponseEmployer: formValues[`response_employer_${rating.ratingCardId}`],
-      ratingEmployer: formValues[`rating_employer_${rating.ratingCardId}`]
-    }));
-
-    this.isLoading = true;
-
-    this.ratingService.ratingsEmployerPost(updatedRatings)
-      .subscribe(() => this.isLoading = false);
+  private _filter(value: string): string[] {
+    if (!value) {
+      return [...this.candidates];
+    }
+    const filterValue = value.toLowerCase();
+    return this.candidates.filter(option => option.toLowerCase().includes(filterValue));
   }
 }

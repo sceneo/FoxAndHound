@@ -28,7 +28,7 @@ html, body {
 body { margin: 0; background-color: $color-bg; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 .color-primary {
-  color: $color-primary;
+  color: $color-primary !important;
 }
 
 .mat-mdc-nav-list {

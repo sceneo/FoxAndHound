@@ -1,11 +1,18 @@
 <form [formGroup]="candidatesForm" class="candidate-form">
   <mat-form-field class="full-width">
     <mat-label>Senior candidate</mat-label>
-    <mat-select [disabled]="isLoading" (selectionChange)="onCandidateChange($event)">
-      @for (candidate of candidates; track candidate) {
+
+    <input class="color-primary"
+      type="text"
+      matInput
+      formControlName="userEmail"
+      [matAutocomplete]="auto">
+
+    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onCandidateChange($event)">
+      @for (candidate of filteredCandidates | async; track candidate) {
         <mat-option [value]="candidate">{{ candidate }}</mat-option>
       }
-    </mat-select>
+    </mat-autocomplete>
   </mat-form-field>
 </form>
 

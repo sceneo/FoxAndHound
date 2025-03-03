@@ -42,7 +42,7 @@ body { margin: 0; background-color: $color-bg; font-family: Roboto, "Helvetica N
     border-bottom-style: groove;
     border-color: $color-primary;
     margin-bottom: 2%;
-    
+
     span.item-text {
       color: $color-primary !important;
     }
@@ -177,4 +177,17 @@ mat-label {
       color: $color-primary !important;
     }
   }
+}
+
+.mat-mdc-slide-toggle {
+  color: $color-primary !important;
+  margin-right: 16px
+}
+
+.mat-mdc-slide-toggle .mdc-form-field {
+  color: $color-primary !important;
+}
+
+.mat-mdc-slide-toggle .mdc-label {
+  color: $color-primary !important;
 }

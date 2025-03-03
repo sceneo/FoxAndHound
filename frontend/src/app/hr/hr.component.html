@@ -14,31 +14,51 @@
       }
     </mat-autocomplete>
   </mat-form-field>
+
+  <div>
+    <mat-slide-toggle formControlName="hideCandidateInfo">
+      Hide candidate info
+    </mat-slide-toggle>
+    <mat-slide-toggle formControlName="hideRating">
+      Hide rating
+    </mat-slide-toggle>
+  </div>
 </form>
 
 <form *ngIf="ratingForm" [formGroup]="ratingForm" (ngSubmit)="onSubmit()" class="rating-form">
   <ng-container *ngFor="let category of categories">
     <h2 class="category-title">{{ category }}</h2>
     <ng-container *ngFor="let rating of getRatingsOfCategory(category); let index = index">
-      
       <div class="rating-card">
         <p class="question">{{ rating.question }}</p>
-        <div class="subheading">Candidate's Answer</div>
-        <div class="inputs">
-          <mat-form-field class="full-width">
-            <textarea matInput [formControlName]="'response_candidate_' + rating.ratingCardId"></textarea>
-          </mat-form-field>
-          <app-rating-slider [formControlName]="'rating_candidate_' + rating.ratingCardId"></app-rating-slider>
-        </div>
 
-        <div class="subheading">Your Answer</div>
-        <div class="inputs">
-          <mat-form-field class="full-width">
-            <textarea matInput [formControlName]="'response_employer_' + rating.ratingCardId" placeholder="Your answer"></textarea>
-          </mat-form-field>
-          <app-rating-slider [formControlName]="'rating_employer_' + rating.ratingCardId"></app-rating-slider>
+        <div class="rating-content">
+          <div class="answers">
+            <div class="subheading" [class.hidden]="hideCandidateAnswers()">Candidate's Answer</div>
+            <div class="inputs" [class.hidden]="hideCandidateAnswers()">
+              <mat-form-field class="full-width">
+                <textarea matInput [formControlName]="'response_candidate_' + rating.ratingCardId"></textarea>
+              </mat-form-field>
+              <app-rating-slider [formControlName]="'rating_candidate_' + rating.ratingCardId"></app-rating-slider>
+            </div>
+
+            <div class="subheading">Your Answer</div>
+            <div class="inputs">
+              <mat-form-field class="full-width">
+                <textarea matInput [formControlName]="'response_employer_' + rating.ratingCardId" placeholder="Your answer"></textarea>
+              </mat-form-field>
+              <app-rating-slider [formControlName]="'rating_employer_' + rating.ratingCardId"></app-rating-slider>
+            </div>
+          </div>
+
+          <ng-container *ngIf="!hideRatings()">
+            <div class="rating-label">
+              <div class="subheading">Rating</div>
+            </div>
+          </ng-container>
         </div>
       </div>
+
     </ng-container>
   </ng-container>
 

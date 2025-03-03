@@ -10,6 +10,7 @@ import { ModelsEmployerRatingDTO, RatingEmployerService } from '../api';
 import { MatSelectModule } from '@angular/material/select';
 import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { map, Observable, of, startWith, switchMap, tap } from 'rxjs';
+import {MatSlideToggle} from '@angular/material/slide-toggle';
 
 @Component({
   selector: 'app-hr',
@@ -25,7 +26,8 @@ import { map, Observable, of, startWith, switchMap, tap } from 'rxjs';
     MatSelectModule,
     ReactiveFormsModule,
     FormsModule,
-    RatingSliderComponent
+    RatingSliderComponent,
+    MatSlideToggle
   ],
   standalone: true
 })
@@ -37,19 +39,21 @@ export class HrComponent implements OnInit {
 
   ratingForm: FormGroup | null = null;
   candidatesForm: FormGroup  = new FormGroup({
-    "userEmail": new FormControl("", [Validators.email, Validators.required])
+    "userEmail": new FormControl("", [Validators.email, Validators.required]),
+    "hideCandidateInfo": new FormControl(true, []),
+    "hideRating": new FormControl(true, [])
   });
   filteredCandidates: Observable<string[]> = of([]);
 
   private selectedUserMail: string | null = null;
 
   constructor(private ratingService: RatingEmployerService) {
-    
+
   }
 
   ngOnInit() {
     this.isLoading = true;
-    
+
     this.filteredCandidates = this.ratingService.ratingsEmployerCandidatesGet().pipe(
       tap(users => {
         this.candidates = users;
@@ -131,5 +135,13 @@ export class HrComponent implements OnInit {
     }
     const filterValue = value.toLowerCase();
     return this.candidates.filter(option => option.toLowerCase().includes(filterValue));
+  }
+
+  hideCandidateAnswers(): boolean {
+    return this.candidatesForm.get('hideCandidateInfo')?.value ?? true;
+  }
+
+  hideRatings(): boolean {
+    return this.candidatesForm.get('hideRating')?.value ?? true;
   }
 }

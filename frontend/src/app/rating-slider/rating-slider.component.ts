@@ -23,6 +23,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 export class RatingSliderComponent implements ControlValueAccessor {
   selectedValue: number = 0;
   result: string = "";
+  isDisabled = false;
 
   private onChange = (value: number) => {};
   private onTouched = () => {};
@@ -61,5 +62,9 @@ export class RatingSliderComponent implements ControlValueAccessor {
 
   formatLabel(value: number): string {
     return `${value} %`;
+  }
+
+  setDisabledState(isDisabled: boolean): void {
+      this.isDisabled = isDisabled;
   }
 }

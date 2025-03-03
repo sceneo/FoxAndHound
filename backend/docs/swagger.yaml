@@ -111,7 +111,7 @@ paths:
             $ref: '#/definitions/models.ErrorResponse'
       summary: Get candidate ratings
       tags:
-      - rating
+      - rating-candidate
     post:
       consumes:
       - application/json
@@ -144,7 +144,7 @@ paths:
             $ref: '#/definitions/models.ErrorResponse'
       summary: Save candidate ratings
       tags:
-      - rating
+      - rating-candidate
   /ratings/employer:
     get:
       description: Fetches rating cards and enriches them with existing ratings for
@@ -170,5 +170,57 @@ paths:
             $ref: '#/definitions/models.ErrorResponse'
       summary: Get candidate ratings for employer
       tags:
-      - rating
+      - rating-employer
+    post:
+      consumes:
+      - application/json
+      description: Stores or updates candidate ratings of employer in the database
+      parameters:
+      - description: List of candidate ratings
+        in: body
+        name: ratings
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.EmployerRatingDTO'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: 'message: Ratings saved successfully'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid request payload
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Failed to save ratings
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Save employer ratings
+      tags:
+      - rating-employer
+  /ratings/employer/candidates:
+    get:
+      description: Fetches rating candidates
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: string
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Get rating candidates
+      tags:
+      - rating-employer
 swagger: "2.0"

@@ -1,4 +1,180 @@
-/* You can add global styles to this file, and also import other style files */
+@use '@angular/material' as mat;
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+$color-bg: #191E25;
+$color-fg: #29323C;
+$color-primary: #18BEC1;
+
+:root {
+    @include mat.slider-overrides((
+        disabled-active-track-color: $color-primary,
+        disabled-handle-color: $color-primary,
+        disabled-inactive-track-color: $color-primary
+    ));
+
+    @include mat.select-overrides((
+        panel-background-color: $color-bg,
+        enabled-trigger-text-color: $color-primary,
+        disabled-trigger-text-color: $color-primary,
+        placeholder-text-color: $color-primary,
+        enabled-arrow-color: $color-primary,
+        disabled-arrow-color: $color-primary
+    ));
+}
+
+html, body {
+    height: 100%;
+    background-color: $color-bg;
+}
+body { margin: 0; background-color: $color-bg; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.color-primary {
+  color: $color-primary !important;
+}
+
+.mat-mdc-nav-list {
+  background-color: $color-bg;
+  a.list-item {
+    background-color: $color-fg;
+    border-radius: unset;
+    border-top-width: thin;
+    border-top-style: groove;
+    border-bottom-width: thin;
+    border-bottom-style: groove;
+    border-color: $color-primary;
+    margin-bottom: 2%;
+    
+    span.item-text {
+      color: $color-primary !important;
+    }
+  }
+}
+
+/* General layout */
+.sidenav-container {
+  height: 100vh;
+}
+
+.toolbar {
+  background-color: $color-fg !important;
+  border-bottom: thin solid $color-primary;
+}
+
+.app-title {
+  font-size: 1.4rem;
+  font-weight: bold;
+  margin-left: 16px;
+  color: $color-primary;
+}
+
+.icon-color {
+    color: $color-primary;
+}
+
+.sidenav {
+  background-color: $color-bg !important;
+  border-radius: unset !important;
+  border-right: thin solid $color-primary !important;
+}
+
+.sidenav-content {
+  padding: 16px;
+  background-color: $color-bg;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.rating-form {
+  max-width: 600px;
+  margin: auto;
+  padding: 16px;
+  background: $color-fg;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.rating-card {
+  padding: 12px;
+  background: $color-bg;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.mdc-text-field--filled {
+    background-color: $color-fg !important;
+}
+
+textarea {
+    color: $color-primary !important;
+}
+
+.question {
+  font-size: 1rem;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: $color-primary;
+}
+
+.inputs {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+}
+
+.subheading {
+  font-weight: bold;
+  font-size: 0.9rem;
+  margin-top: 8px;
+  color: $color-primary;
+}
+
+/* Button styling */
+.button-group {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+button[mat-raised-button] {
+  padding: 8px 16px;
+  font-size: 1rem;
+}
+
+/* Typography */
+h2.category-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: $color-primary;
+  margin-top: 16px;
+  border-bottom: 2px solid $color-primary;
+  padding-bottom: 4px;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+mat-label {
+  color: $color-primary;
+}
+
+.slider-text-color {
+    color: $color-primary;
+    margin-top: 0;
+}
+
+.mdc-list-item__primary-text {
+  color: $color-primary !important;
+}
+
+.mail-senior {
+  div.mdc-text-field {
+    background-color: $color-bg !important;
+
+    input {
+      color: $color-primary !important;
+    }
+  }
+}

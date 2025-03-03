@@ -1,10 +1,13 @@
-<mat-slider
-  min="0"
-  max="125"
-  step="25"
-  showTickMarks
-  discrete
-  [displayWith]="formatLabel">
-  <input matSliderThumb [value]="selectedValue" (valueChange)="updateRating($event)">
-</mat-slider>
-<p>{{ result }}</p>
+<div class="slider-container">
+  <mat-slider
+    min="0"
+    max="125"
+    step="25"
+    showTickMarks
+    discrete
+    [disabled]="isDisabled"
+    [displayWith]="formatLabel">
+    <input matSliderThumb [value]="selectedValue" (valueChange)="updateRating($event)">
+  </mat-slider>
+  <p class="slider-text-color">{{ result }}</p>
+</div>

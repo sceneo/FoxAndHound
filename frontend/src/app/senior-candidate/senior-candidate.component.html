@@ -1,15 +1,16 @@
-<form *ngIf="ratingForm" [formGroup]="ratingForm" (ngSubmit)="onSubmit()">
-  <mat-form-field>
-    <input matInput formControlName="email" placeholder="Your email"/>
+<form *ngIf="ratingForm" [formGroup]="ratingForm" (ngSubmit)="onSubmit()" class="rating-form">
+  <mat-form-field class="full-width mail-senior">
+    <input matInput formControlName="email" placeholder="Your email" />
   </mat-form-field>
+
   <ng-container *ngFor="let category of categories">
-    <h2>{{ category }}</h2>
+    <h2 class="category-title">{{ category }}</h2>
     <ng-container *ngFor="let rating of getRatingsOfCategory(category); let index = index">
       <div class="rating-card">
         <p class="question">{{ rating.question }}</p>
 
         <div class="inputs">
-          <mat-form-field>
+          <mat-form-field class="full-width">
             <textarea matInput [formControlName]="'response_' + rating.ratingCardId" placeholder="Your answer"></textarea>
           </mat-form-field>
           <app-rating-slider [formControlName]="'rating_' + rating.ratingCardId"></app-rating-slider>

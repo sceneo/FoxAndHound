@@ -5,9 +5,11 @@ import (
 	"backend/repository"
 	"context"
 	"sort"
+	"time"
+	"log"
 )
 
-func GetCandidateRatingsForEmployer(ctx context.Context, userEmail string) ([]models.EmployerRatingDTO, error) {
+func GetEmployerRatings(ctx context.Context, userEmail string) ([]models.EmployerRatingDTO, error) {
     ratingCards, err := repository.GetRatingCards(ctx)
 	if err != nil {
 		return nil, err
@@ -55,4 +57,35 @@ func GetCandidateRatingsForEmployer(ctx context.Context, userEmail string) ([]mo
 	})
 
 	return employerRatings, nil
+}
+
+func SaveEmployerRatings(ctx context.Context, candidateRatingsEmployer []models.EmployerRatingDTO) error {
+	for _, dto := range candidateRatingsEmployer {
+		currentTime := time.Now()
+
+		rating := models.Rating {
+			UserEmail: dto.UserEmail,
+			RatingCardID: dto.RatingCardID,
+			RatingEmployer: *dto.RatingEmployer,
+			TextResponseEmployer: *dto.TextResponseEmployer,
+			TimeStampEmployer: &currentTime,
+		}
+
+		err := repository.SaveOrUpdateRating(ctx, &rating, false)
+		if err != nil {
+			log.Println("❌ Error saving employer rating:", err)
+			return err
+		}
+	}
+	return nil
+}
+
+func GetSeniorCandidates(ctx context.Context) ([]string, error) {
+	emails, err := repository.GetSeniorCandidates(ctx)
+	if err != nil {
+		log.Println("Error:", err)
+		return nil, err
+	}
+	
+	return emails, nil
 }

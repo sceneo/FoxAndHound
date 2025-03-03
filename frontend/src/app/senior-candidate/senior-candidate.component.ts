@@ -3,13 +3,15 @@ import {CommonModule} from '@angular/common';
 import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
 import {MatInputModule} from '@angular/material/input';
+import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {RatingSliderComponent} from '../rating-slider/rating-slider.component'; // Reactive forms
-import { ModelsCandidateRatingDTO, RatingService } from '../api';
+import { ModelsCandidateRatingDTO, RatingCandidateService } from '../api';
+import { SuccessfullComponent } from '../successfull/successfull.component';
 
 @Component({
-  selector: 'app-root',
+  selector: 'app-senior-candidate',
   templateUrl: './senior-candidate.component.html',
   styleUrls: ['./senior-candidate.component.scss'],
   imports: [
@@ -18,6 +20,7 @@ import { ModelsCandidateRatingDTO, RatingService } from '../api';
     MatButtonModule,
     MatInputModule,
     MatFormFieldModule,
+    MatDialogModule,
     ReactiveFormsModule,
     FormsModule,
     RatingSliderComponent
@@ -30,7 +33,7 @@ export class SeniorCandidateComponent implements OnInit {
   ratingForm!: FormGroup;
   categories: string[] = [];
 
-  constructor(private ratingService: RatingService) {}
+  constructor(private ratingService: RatingCandidateService, private dialog: MatDialog) {}
 
   ngOnInit() {
     this.isLoading = true;
@@ -45,7 +48,10 @@ export class SeniorCandidateComponent implements OnInit {
 
   initializeForm() {
     const controls: Record<string, FormControl> = {};
-    controls[`email`] = new FormControl("", [Validators.required, Validators.email]);
+    
+    controls[`email`] = new FormControl("thomas.lederer@prodyna.com", [Validators.required, Validators.email]);
+    controls[`email`].disable();
+
     this.candidateRatings.forEach((rating) => {
       controls[`response_${rating.ratingCardId}`] = new FormControl(rating.textResponseCandidate || "", [Validators.required]);
       controls[`rating_${rating.ratingCardId}`] = new FormControl(rating.ratingCandidate || 0, [Validators.required]);
@@ -72,6 +78,12 @@ export class SeniorCandidateComponent implements OnInit {
       ratingCandidate: formValues[`rating_${rating.ratingCardId}`]
     }));
 
-    this.ratingService.ratingsCandidatePost(updatedRatings).subscribe();
+    this.isLoading = true;
+
+    this.ratingService.ratingsCandidatePost(updatedRatings)
+      .subscribe(() => {
+        this.isLoading = false;
+        this.dialog.open(SuccessfullComponent);
+      });
   }
 }

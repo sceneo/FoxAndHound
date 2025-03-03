@@ -15,6 +15,10 @@ func SetupRoutes(router *gin.Engine) {
 		
 		api.POST("/ratings/candidate", handlers.SaveCandidateRatings)
 
-		api.GET("/ratings/employer", handlers.GetCandidateRatingsEmployer)
+		api.GET("/ratings/employer/candidates", handlers.GetRatingCandidates)
+
+		api.GET("/ratings/employer", handlers.GetEmployerRatings)
+
+		api.POST("/ratings/employer", handlers.SaveEmployerRatings)
 	}
 }

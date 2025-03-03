@@ -1,0 +1,28 @@
+.powerbar-container {
+  width: 100%;
+  max-width: 400px;
+  margin: 10px auto;
+  text-align: center;
+  font-family: Arial, sans-serif;
+}
+
+svg {
+  display: block;
+  width: 100%;
+}
+
+.background-bar {
+  fill: #e0e0e0;
+  rx: 5;
+}
+
+.progress-bar {
+  rx: 5;
+  transition: width 0.4s ease-in-out, fill 0.4s ease-in-out;
+}
+
+.comparison-line {
+  stroke: black;
+  stroke-width: 2;
+  stroke-dasharray: 4;
+}

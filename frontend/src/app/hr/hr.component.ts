@@ -11,6 +11,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { map, Observable, of, startWith, switchMap, tap } from 'rxjs';
 import {MatSlideToggle} from '@angular/material/slide-toggle';
+import {RatingGraphicComponent} from '../rating-graphic/rating-graphic.component';
 
 @Component({
   selector: 'app-hr',
@@ -27,7 +28,8 @@ import {MatSlideToggle} from '@angular/material/slide-toggle';
     ReactiveFormsModule,
     FormsModule,
     RatingSliderComponent,
-    MatSlideToggle
+    MatSlideToggle,
+    RatingGraphicComponent
   ],
   standalone: true
 })
@@ -117,11 +119,13 @@ export class HrComponent implements OnInit {
 
         const controls: Record<string, FormControl> = {};
 
+        // TODO: we need to load the average rating. currently we randomly pick a number
         ratings.forEach((rating) => {
           controls[`response_candidate_${rating.ratingCardId}`] = new FormControl({ value: rating.textResponseCandidate || "", disabled: true }, []);
           controls[`rating_candidate_${rating.ratingCardId}`] = new FormControl({ value: rating.ratingCandidate || 0, disabled: true }, []);
           controls[`response_employer_${rating.ratingCardId}`] = new FormControl(rating.textResponseEmployer || "", [Validators.required]);
           controls[`rating_employer_${rating.ratingCardId}`] = new FormControl(rating.ratingEmployer || 0, [Validators.required]);
+          controls[`average_rating_${rating.ratingCardId}`] = new FormControl(Math.random() * 120, []);
         });
         this.ratingForm = new FormGroup(controls);
         this.isLoading = false;
@@ -143,5 +147,20 @@ export class HrComponent implements OnInit {
 
   hideRatings(): boolean {
     return this.candidatesForm.get('hideRating')?.value ?? true;
+  }
+
+  getCurrentRating(ratingCardId: number | undefined): number {
+    if(ratingCardId) {
+      return this.ratingForm?.get('rating_employer_' + ratingCardId)?.value ?? 0;
+    }
+    return 0;
+  }
+
+  getComparisonRating(ratingCardId: number | undefined): number {
+    if(ratingCardId) {
+      return this.ratingForm?.get('average_rating_' + ratingCardId)?.value ?? 100.0;
+
+    }
+    return 0;
   }
 }

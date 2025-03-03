@@ -54,6 +54,10 @@
           <ng-container *ngIf="!hideRatings()">
             <div class="rating-label">
               <div class="subheading">Rating</div>
+              <app-rating-graphic
+                [currentRating]="getCurrentRating(rating.ratingCardId)"
+                [comparisonRating]="getComparisonRating(rating.ratingCardId)">
+              </app-rating-graphic>
             </div>
           </ng-container>
         </div>

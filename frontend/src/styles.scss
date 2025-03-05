@@ -192,6 +192,10 @@ mat-label {
   color: $color-primary !important;
 }
 
+.mat-mdc-checkbox .mdc-label {
+  color: $color-primary !important;
+}
+
 .labels {
   font-size: 12px;
   color: $color-primary;

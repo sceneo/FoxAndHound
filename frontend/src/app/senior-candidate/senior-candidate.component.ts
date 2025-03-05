@@ -9,6 +9,8 @@ import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} fr
 import {RatingSliderComponent} from '../rating-slider/rating-slider.component'; // Reactive forms
 import { ModelsCandidateRatingDTO, RatingCandidateService } from '../api';
 import { SuccessfullComponent } from '../successfull/successfull.component';
+import {MatCheckbox} from '@angular/material/checkbox';
+import {SuccessfullySavedComponent} from '../successfull-saved/successfully-saved.component';
 
 @Component({
   selector: 'app-senior-candidate',
@@ -23,7 +25,8 @@ import { SuccessfullComponent } from '../successfull/successfull.component';
     MatDialogModule,
     ReactiveFormsModule,
     FormsModule,
-    RatingSliderComponent
+    RatingSliderComponent,
+    MatCheckbox
   ],
   standalone: true
 })
@@ -48,13 +51,14 @@ export class SeniorCandidateComponent implements OnInit {
 
   initializeForm() {
     const controls: Record<string, FormControl> = {};
-    
+
     controls[`email`] = new FormControl("thomas.lederer@prodyna.com", [Validators.required, Validators.email]);
     controls[`email`].disable();
 
     this.candidateRatings.forEach((rating) => {
       controls[`response_${rating.ratingCardId}`] = new FormControl(rating.textResponseCandidate || "", [Validators.required]);
       controls[`rating_${rating.ratingCardId}`] = new FormControl(rating.ratingCandidate || 0, [Validators.required]);
+      controls[`not_applicable_${rating.ratingCardId}`] = new FormControl(rating.ratingCandidate || false, undefined);
     });
 
     this.ratingForm = new FormGroup(controls);  // Assign FormGroup after initialization
@@ -69,21 +73,35 @@ export class SeniorCandidateComponent implements OnInit {
     );
   }
 
+  save(): void {
+    this.saveAndSetSubmittedFlag(false);
+  }
+
   onSubmit(): void {
+    this.saveAndSetSubmittedFlag(true);
+  }
+
+  saveAndSetSubmittedFlag(submit: boolean): void {
     const formValues = this.ratingForm.getRawValue();
-  
+
     const updatedRatings: ModelsCandidateRatingDTO[] = this.candidateRatings.map(rating => ({
       ...rating,
       textResponseCandidate: formValues[`response_${rating.ratingCardId}`],
-      ratingCandidate: formValues[`rating_${rating.ratingCardId}`]
+      ratingCandidate: formValues[`rating_${rating.ratingCardId}`],
+      notApplicable: formValues[`not_applicable_${rating.ratingCardId}`]
     }));
 
     this.isLoading = true;
 
+    // TODO: handover submit-flag here
     this.ratingService.ratingsCandidatePost(updatedRatings)
       .subscribe(() => {
         this.isLoading = false;
-        this.dialog.open(SuccessfullComponent);
+        if(submit) {
+          this.dialog.open(SuccessfullComponent);
+        } else {
+          this.dialog.open(SuccessfullySavedComponent)
+        }
       });
   }
 }

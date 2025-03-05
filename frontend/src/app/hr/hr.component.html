@@ -25,7 +25,20 @@
   </div>
 </form>
 
+<!-- TODO:
+Toggle AgreedOn
+Name
+Experience Since
+Start at Prodyna
+Age
+Abstract
+-->
+
 <form *ngIf="ratingForm" [formGroup]="ratingForm" (ngSubmit)="onSubmit()" class="rating-form">
+  <div class="button-group">
+    <button mat-raised-button color="accent">Save</button>
+  </div>
+
   <ng-container *ngFor="let category of categories">
     <h2 class="category-title">{{ category }}</h2>
     <ng-container *ngFor="let rating of getRatingsOfCategory(category); let index = index">
@@ -39,7 +52,12 @@
               <mat-form-field class="full-width">
                 <textarea matInput [formControlName]="'response_candidate_' + rating.ratingCardId"></textarea>
               </mat-form-field>
-              <app-rating-slider [formControlName]="'rating_candidate_' + rating.ratingCardId"></app-rating-slider>
+              <div>
+                <mat-checkbox [formControlName]="'not_applicable_candidate_' + rating.ratingCardId">
+                  not applicable
+                </mat-checkbox>
+                <app-rating-slider [formControlName]="'rating_candidate_' + rating.ratingCardId"></app-rating-slider>
+              </div>
             </div>
 
             <div class="subheading">Your Answer</div>
@@ -47,7 +65,12 @@
               <mat-form-field class="full-width">
                 <textarea matInput [formControlName]="'response_employer_' + rating.ratingCardId" placeholder="Your answer"></textarea>
               </mat-form-field>
-              <app-rating-slider [formControlName]="'rating_employer_' + rating.ratingCardId"></app-rating-slider>
+              <div>
+                <mat-checkbox [formControlName]="'not_applicable_employer_' + rating.ratingCardId">
+                  not applicable
+                </mat-checkbox>
+                <app-rating-slider [formControlName]="'rating_employer_' + rating.ratingCardId"></app-rating-slider>
+              </div>
             </div>
           </div>
 
@@ -65,8 +88,4 @@
 
     </ng-container>
   </ng-container>
-
-  <div class="button-group">
-    <button mat-raised-button color="accent" [disabled]="!ratingForm.valid">Submit</button>
-  </div>
 </form>

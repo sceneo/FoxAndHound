@@ -12,6 +12,7 @@ import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/ma
 import { map, Observable, of, startWith, switchMap, tap } from 'rxjs';
 import {MatSlideToggle} from '@angular/material/slide-toggle';
 import {RatingGraphicComponent} from '../rating-graphic/rating-graphic.component';
+import {MatCheckbox} from '@angular/material/checkbox';
 
 @Component({
   selector: 'app-hr',
@@ -29,7 +30,8 @@ import {RatingGraphicComponent} from '../rating-graphic/rating-graphic.component
     FormsModule,
     RatingSliderComponent,
     MatSlideToggle,
-    RatingGraphicComponent
+    RatingGraphicComponent,
+    MatCheckbox
   ],
   standalone: true
 })
@@ -49,9 +51,7 @@ export class HrComponent implements OnInit {
 
   private selectedUserMail: string | null = null;
 
-  constructor(private ratingService: RatingEmployerService) {
-
-  }
+  constructor(private ratingService: RatingEmployerService) {}
 
   ngOnInit() {
     this.isLoading = true;
@@ -88,7 +88,8 @@ export class HrComponent implements OnInit {
     const updatedRatings: ModelsEmployerRatingDTO[] = this.employerRatings.map(rating => ({
       ...rating,
       textResponseEmployer: formValues[`response_employer_${rating.ratingCardId}`],
-      ratingEmployer: formValues[`rating_employer_${rating.ratingCardId}`]
+      ratingEmployer: formValues[`rating_employer_${rating.ratingCardId}`],
+      notApplicableEmployer: formValues[`not_applicable_employer_${rating.ratingCardId}`],
     }));
 
     this.isLoading = true;
@@ -123,8 +124,10 @@ export class HrComponent implements OnInit {
         ratings.forEach((rating) => {
           controls[`response_candidate_${rating.ratingCardId}`] = new FormControl({ value: rating.textResponseCandidate || "", disabled: true }, []);
           controls[`rating_candidate_${rating.ratingCardId}`] = new FormControl({ value: rating.ratingCandidate || 0, disabled: true }, []);
+          controls[`not_applicable_candidate_${rating.ratingCardId}`] = new FormControl({ value: rating.notApplicableCandidate || false, disabled: true }, []);
           controls[`response_employer_${rating.ratingCardId}`] = new FormControl(rating.textResponseEmployer || "", [Validators.required]);
           controls[`rating_employer_${rating.ratingCardId}`] = new FormControl(rating.ratingEmployer || 0, [Validators.required]);
+          controls[`not_applicable_employer_${rating.ratingCardId}`] = new FormControl(rating.notApplicableEmployer || false, undefined);
           controls[`average_rating_${rating.ratingCardId}`] = new FormControl(Math.random() * 120, []);
         });
         this.ratingForm = new FormGroup(controls);

@@ -3,6 +3,11 @@
     <input matInput formControlName="email" placeholder="Your email" />
   </mat-form-field>
 
+  <div class="button-group">
+    <button mat-raised-button color="accent" (click)="save()">Save</button>
+    <button mat-raised-button color="accent" [disabled]="!ratingForm.valid">Submit</button>
+  </div>
+
   <ng-container *ngFor="let category of categories">
     <h2 class="category-title">{{ category }}</h2>
     <ng-container *ngFor="let rating of getRatingsOfCategory(category); let index = index">
@@ -13,13 +18,14 @@
           <mat-form-field class="full-width">
             <textarea matInput [formControlName]="'response_' + rating.ratingCardId" placeholder="Your answer"></textarea>
           </mat-form-field>
-          <app-rating-slider [formControlName]="'rating_' + rating.ratingCardId"></app-rating-slider>
+          <div>
+            <mat-checkbox [formControlName]="'not_applicable_' + rating.ratingCardId">
+              not applicable
+            </mat-checkbox>
+            <app-rating-slider [formControlName]="'rating_' + rating.ratingCardId"></app-rating-slider>
+          </div>
         </div>
       </div>
     </ng-container>
   </ng-container>
-
-  <div class="button-group">
-    <button mat-raised-button color="accent" [disabled]="!ratingForm.valid">Submit</button>
-  </div>
 </form>

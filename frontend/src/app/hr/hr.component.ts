@@ -41,6 +41,7 @@ export class HrComponent implements OnInit {
   candidates: string[] = [];
   categories: string[] = [];
 
+  headDataForm: FormGroup | null = null;
   ratingForm: FormGroup | null = null;
   candidatesForm: FormGroup  = new FormGroup({
     "userEmail": new FormControl("", [Validators.email, Validators.required]),
@@ -82,7 +83,7 @@ export class HrComponent implements OnInit {
     );
   }
 
-  onSubmit(): void {
+  save(): void {
     const formValues = this.ratingForm?.getRawValue();
 
     const updatedRatings: ModelsEmployerRatingDTO[] = this.employerRatings.map(rating => ({
@@ -113,6 +114,18 @@ export class HrComponent implements OnInit {
 
     this.ratingForm = null;
     this.isLoading = true;
+
+//    this.headDataService.headDataGet(this.selectedUserMail)
+//      .subscribe(// TODO: set value in headDataForm)
+    // maybe also use a datepicker here
+    this.headDataForm = new FormGroup({
+      "agreedOn": new FormControl(false, undefined),
+      "name": new FormControl("", []),
+      "experienceSince": new FormControl("", []),
+      "startAtProdyna": new FormControl("", []),
+      "age": new FormControl(0, []),
+      "abstract": new FormControl("", undefined),
+    });
 
     this.ratingService.ratingsEmployerGet(this.selectedUserMail)
       .subscribe(ratings => {
@@ -165,5 +178,9 @@ export class HrComponent implements OnInit {
 
     }
     return 0;
+  }
+
+  isSaveButtonEnabled(): boolean {
+    return this.headDataForm !== null && this.candidatesForm !== null;
   }
 }

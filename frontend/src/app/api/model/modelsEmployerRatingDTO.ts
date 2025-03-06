@@ -8,7 +8,7 @@
  * Do not edit the class manually.
  */
 
-
+// TODO: we should check if we have the header data out of this dto (i think they will only be used once)
 export interface ModelsEmployerRatingDTO {
     category?: string;
     orderId?: number;
@@ -16,6 +16,12 @@ export interface ModelsEmployerRatingDTO {
     ratingCandidate?: number;
     ratingCardId?: number;
     ratingEmployer?: number;
+    agreedOn?: number; // TODO: include in BE
+    name?: string;
+    abstract?: string;
+    experienceSince?: Date;
+    startAtProdyna?: Date;
+    age?: number;
     notApplicableCandidate?: boolean; // TODO: include those in the BE
     notApplicableEmployer?: boolean; // TODO: include those in the BE
     textResponseCandidate?: string;

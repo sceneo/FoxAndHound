@@ -107,7 +107,13 @@ body { margin: 0; background-color: $color-bg; font-family: Roboto, "Helvetica N
 }
 
 textarea {
-    color: $color-primary !important;
+  color: $color-primary !important;
+  background-color: $color-fg !important;
+}
+
+input {
+  color: $color-primary !important;
+  background-color: $color-fg !important;
 }
 
 .question {

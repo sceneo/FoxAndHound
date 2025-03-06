@@ -1,11 +1,11 @@
-<form *ngIf="ratingForm" [formGroup]="ratingForm" (ngSubmit)="onSubmit()" class="rating-form">
+<form *ngIf="ratingForm" [formGroup]="ratingForm" class="rating-form">
   <mat-form-field class="full-width mail-senior">
     <input matInput formControlName="email" placeholder="Your email" />
   </mat-form-field>
 
   <div class="button-group">
-    <button mat-raised-button color="accent" (click)="save()">Save</button>
-    <button mat-raised-button color="accent" [disabled]="!ratingForm.valid">Submit</button>
+    <button mat-raised-button color="accent" (click)="save()" class="buttons">Save</button>
+    <button mat-raised-button color="accent" (click)="onSubmit()" [disabled]="!ratingForm.valid" class="buttons">Submit</button>
   </div>
 
   <ng-container *ngFor="let category of categories">

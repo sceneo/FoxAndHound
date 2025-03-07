@@ -11,14 +11,14 @@ import (
 // GetHeadData godoc
 // @Summary Get head data for candidate
 // @Description Fetches head data for certain candidate
-// @Tags rating-employer
+// @Tags head-data
 // @Produce json
 // @Success 200 {array} string
 // @Failure 500 {object} models.ErrorResponse
 // @Router /head-data [get]
 func GetHeadData(c *gin.Context) {
 
-    userEmail := c.Query("userEmail")
+	userEmail := c.Query("userEmail")
 	if userEmail == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "userEmail is required"})
 		return
@@ -48,9 +48,9 @@ func GetHeadData(c *gin.Context) {
 func SaveHeadData(c *gin.Context) {
 	var headDataDTO models.HeadDataDTO
 	if err := c.ShouldBindJSON(&headDataDTO); err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload"})
-        return
-    }
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload"})
+		return
+	}
 
 	err := services.SaveHeadData(c.Request.Context(), headDataDTO)
 	if err != nil {

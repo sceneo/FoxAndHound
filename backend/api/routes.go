@@ -2,7 +2,6 @@ package api
 
 import (
 	"backend/handlers"
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -20,5 +19,9 @@ func SetupRoutes(router *gin.Engine) {
 		api.GET("/ratings/employer", handlers.GetEmployerRatings)
 
 		api.POST("/ratings/employer", handlers.SaveEmployerRatings)
+
+        api.GET("/head-data", handlers.GetHeadData)
+
+        api.POST("/head-data", handlers.SaveHeadData)
 	}
 }

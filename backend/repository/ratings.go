@@ -57,6 +57,18 @@ func SaveOrUpdateRating(ctx context.Context, rating *models.Rating, isCandidate 
 	return tx.Commit().Error
 }
 
+func GetRatingsByEmails(ctx context.Context, userEmails []string) ([]models.Rating, error) {
+	var ratings []models.Rating
+	result := config.DB.WithContext(ctx).
+		Where("user_email IN ?", userEmails).
+		Find(&ratings)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return ratings, nil
+}
+
 func GetSeniorCandidates(ctx context.Context) ([]string, error) {
 	var userEmails []string
 	err := config.DB.WithContext(ctx).

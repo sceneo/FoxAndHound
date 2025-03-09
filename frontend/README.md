@@ -4,17 +4,17 @@
 
 ```bash
 cd frontend
-docker build . -f ../infra/docker/build-webapp.Dockerfile -t foxandhound-webapp_local
-docker tag foxandhound-webapp_local johannesrosskopp/my_private_repository:foxandhound-webapp_dev_latest
-docker push johannesrosskopp/my_private_repository:foxandhound-webapp_dev_latest
+docker build . -f ../infra/docker/build_webapp.Dockerfile -t foxandhound_webapp_local
+docker tag foxandhound_webapp_local johannesrosskopp/my_private_repository:foxandhound_webapp_dev_latest
+docker push johannesrosskopp/my_private_repository:foxandhound_webapp_dev_latest
 ```
 
-for a release version also tag and push an image with a version like foxandhound-frontend_dev_1_0_0
+for a release version also tag and push an image with a version like foxandhound_webapp_dev_1_0_0
 
 ## Run backend container with host network
 
 ```bash
-docker run --network="host" foxandhound-frontend
+docker run --init --network="host" -e BACKEND_URL=http://127.0.0.1:8080 foxandhound_webapp_local
 ```
 
 

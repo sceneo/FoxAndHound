@@ -43,7 +43,6 @@ func SaveOrUpdateHeadData(ctx context.Context, headData models.HeadData) error {
 	if result.RowsAffected > 0 {
 		updateFields := map[string]interface{}{}
 
-		updateFields["user_email"] = headData.UserEmail
 		updateFields["name"] = headData.Name
 		updateFields["experience_since"] = headData.ExperienceSince
 		updateFields["start_at_prodyna"] = headData.StartAtProdyna
@@ -55,7 +54,7 @@ func SaveOrUpdateHeadData(ctx context.Context, headData models.HeadData) error {
 
 		if err != nil {
 			tx.Rollback()
-			log.Println("❌ Error updating rating:", err)
+			log.Println("❌ Error updating head-data:", err)
 			return err
 		}
 	} else {
@@ -63,7 +62,7 @@ func SaveOrUpdateHeadData(ctx context.Context, headData models.HeadData) error {
 
 		if err != nil {
 			tx.Rollback()
-			log.Println("❌ Error creating rating:", err)
+			log.Println("❌ Error creating head-data:", err)
 			return err
 		}
 	}

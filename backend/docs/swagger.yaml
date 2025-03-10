@@ -72,6 +72,11 @@ definitions:
       userEmail:
         type: string
     type: object
+  models.ManagementSummaryDTO:
+    properties:
+      userEmail:
+        type: string
+    type: object
   models.RatingCard:
     properties:
       category:
@@ -163,6 +168,48 @@ paths:
       summary: Save head data
       tags:
       - head-data
+  /management/agreed-candidates:
+    get:
+      description: Fetches head data for agreed candidates
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.HeadDataDTO'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Get agreed candidates
+      tags:
+      - head-data
+  /management/summary:
+    get:
+      description: Fetches management summary for certain candidate
+      parameters:
+      - description: User Email
+        in: query
+        name: userEmail
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ManagementSummaryDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Get management summary for candidate
+      tags:
+      - managment-summary
   /rating-cards:
     get:
       description: Retrieves all rating cards from the database

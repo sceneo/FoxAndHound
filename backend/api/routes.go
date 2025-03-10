@@ -25,5 +25,9 @@ func SetupRoutes(router *gin.Engine) {
         api.POST("/head-data", handlers.SaveHeadData)
 
 		api.GET("/average", handlers.GetAverage)
+
+		api.GET("/management/agreed-candidates", handlers.GetAgreedCandidates)
+
+		api.GET("/management/summary", handlers.GetManagementSummary)
 	}
 }

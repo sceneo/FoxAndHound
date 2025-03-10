@@ -20,6 +20,19 @@ func GetHeadData(ctx context.Context, userEmail string) (*models.HeadData, error
 	return &headData, nil
 }
 
+func GetHeadDataWithAgreement(ctx context.Context) ([]models.HeadData, error) {
+	var headData []models.HeadData
+	result := config.DB.WithContext(ctx).
+		Model(&models.HeadData{}).
+		Where("agreed_on = ?", true)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return headData, nil
+}
+
 func GetUserEmailsWithAgreement(ctx context.Context) ([]string, error) {
 	var userEmails []string
 	result := config.DB.WithContext(ctx).

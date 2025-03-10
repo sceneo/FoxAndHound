@@ -120,6 +120,70 @@
                 }
             }
         },
+        "/management/agreed-candidates": {
+            "get": {
+                "description": "Fetches head data for agreed candidates",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "head-data"
+                ],
+                "summary": "Get agreed candidates",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.HeadDataDTO"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/management/summary": {
+            "get": {
+                "description": "Fetches management summary for certain candidate",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "managment-summary"
+                ],
+                "summary": "Get management summary for candidate",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User Email",
+                        "name": "userEmail",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ManagementSummaryDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/rating-cards": {
             "get": {
                 "description": "Retrieves all rating cards from the database",
@@ -461,6 +525,14 @@
                 "startAtProdyna": {
                     "type": "string"
                 },
+                "userEmail": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.ManagementSummaryDTO": {
+            "type": "object",
+            "properties": {
                 "userEmail": {
                     "type": "string"
                 }

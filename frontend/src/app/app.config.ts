@@ -5,7 +5,6 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideApiModule } from './api/api.module';
 
 import { routes } from './app.routes';
-import { environment, getConfig } from '../environments/environment';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -13,7 +12,6 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideAnimationsAsync(),
     provideHttpClient(),
-    provideApiModule(environment.API_BASE_PATH),
-    provideAppInitializer(getConfig),
+    provideApiModule('http://localhost:8080/api'),
   ]
 };

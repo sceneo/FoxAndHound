@@ -139,12 +139,10 @@ paths:
       parameters:
       - description: head data
         in: body
-        name: ratings
+        name: headData
         required: true
         schema:
-          items:
-            $ref: '#/definitions/models.HeadDataDTO'
-          type: array
+          $ref: '#/definitions/models.HeadDataDTO'
       produces:
       - application/json
       responses:

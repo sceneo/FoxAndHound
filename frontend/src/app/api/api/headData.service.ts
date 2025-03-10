@@ -228,16 +228,16 @@ export class HeadDataService {
     /**
      * Save head data
      * Stores or updates head data in the database
-     * @param ratings head data
+     * @param headData head data
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public headDataPost(ratings: Array<ModelsHeadDataDTO>, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<{ [key: string]: string; }>;
-    public headDataPost(ratings: Array<ModelsHeadDataDTO>, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<{ [key: string]: string; }>>;
-    public headDataPost(ratings: Array<ModelsHeadDataDTO>, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<{ [key: string]: string; }>>;
-    public headDataPost(ratings: Array<ModelsHeadDataDTO>, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
-        if (ratings === null || ratings === undefined) {
-            throw new Error('Required parameter ratings was null or undefined when calling headDataPost.');
+    public headDataPost(headData: ModelsHeadDataDTO, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<{ [key: string]: string; }>;
+    public headDataPost(headData: ModelsHeadDataDTO, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<{ [key: string]: string; }>>;
+    public headDataPost(headData: ModelsHeadDataDTO, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<{ [key: string]: string; }>>;
+    public headDataPost(headData: ModelsHeadDataDTO, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (headData === null || headData === undefined) {
+            throw new Error('Required parameter headData was null or undefined when calling headDataPost.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -289,7 +289,7 @@ export class HeadDataService {
         return this.httpClient.request<{ [key: string]: string; }>('post', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: ratings,
+                body: headData,
                 responseType: <any>responseType_,
                 withCredentials: this.configuration.withCredentials,
                 headers: localVarHeaders,

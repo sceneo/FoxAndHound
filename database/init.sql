@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS rating_cards (
     order_id INT NOT NULL
 );
 
-CREATE TABLE ratings (
+CREATE TABLE IF NOT EXISTS ratings (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_email VARCHAR(255) NOT NULL,
     time_stamp_candidate DATETIME NULL,
@@ -17,8 +17,10 @@ CREATE TABLE ratings (
     rating_card_id INT NOT NULL,
     rating_candidate INT NOT NULL,
     text_response_candidate TEXT,
+    not_applicable_candidate BOOLEAN,
     rating_employer INT NOT NULL,
-    text_response_employer TEXT
+    text_response_employer TEXT,
+    not_applicable_employer BOOLEAN
 );
 
 CREATE TABLE IF NOT EXISTS head_data (

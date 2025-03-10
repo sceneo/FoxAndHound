@@ -6,7 +6,7 @@ import {CommonModule} from '@angular/common';
 import {RatingSliderComponent} from '../rating-slider/rating-slider.component';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatIconModule} from '@angular/material/icon';
-import {HeadDataService, ModelsEmployerRatingDTO, RatingEmployerService} from '../api';
+import {HeadDataService, ModelsEmployerRatingDTO, ModelsHeadDataDTO, RatingEmployerService} from '../api';
 import { MatSelectModule } from '@angular/material/select';
 import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { map, Observable, of, startWith, switchMap, tap } from 'rxjs';
@@ -94,9 +94,20 @@ export class HrComponent implements OnInit {
     }));
 
     this.isLoading = true;
+    const headDataFormValues = this.headDataForm?.getRawValue();
 
-    this.ratingService.ratingsEmployerPost(updatedRatings)
-      .subscribe(() => this.isLoading = false);
+    const updateHeadData: ModelsHeadDataDTO = {
+      abstract: headDataFormValues['abstract'],
+      age: headDataFormValues['age'],
+      agreedOn: headDataFormValues['agreedOn'],
+      experienceSince: undefined, //headDataFormValues['experienceSince'],TODO decide on date format
+      name: headDataFormValues['name'],
+      startAtProdyna: undefined, // headDataFormValues['startAtProdyna'], TODO decide on date format
+      userEmail: this.selectedUserMail ?? "",
+    }
+
+    this.headDataService.headDataPost(updateHeadData).subscribe(() => this.isLoading = false);
+    this.ratingService.ratingsEmployerPost(updatedRatings).subscribe(() => this.isLoading = false);
   }
 
   private onMailTextChange(mailAddress: string): void {
@@ -122,14 +133,24 @@ export class HrComponent implements OnInit {
 
     this.headDataService.headDataGet(this.selectedUserMail).subscribe(headData => {
       this.headDataForm = new FormGroup({
-        "agreedOn": new FormControl(headData, undefined),
-        "name": new FormControl("", []),
-        "experienceSince": new FormControl("", []),
-        "startAtProdyna": new FormControl("", []),
-        "age": new FormControl(0, []),
-        "abstract": new FormControl("", undefined),
+        "agreedOn": new FormControl(headData.agreedOn || false, undefined),
+        "name": new FormControl(headData.name || "", []),
+        "experienceSince": new FormControl(headData.experienceSince || "", []),
+        "startAtProdyna": new FormControl(headData.startAtProdyna || "", []),
+        "age": new FormControl(headData.age || 0, []),
+        "abstract": new FormControl(headData.abstract ||"", undefined),
       });
-    })
+    },
+      () => {
+        this.headDataForm = new FormGroup({
+          "agreedOn": new FormControl(false, undefined),
+          "name": new FormControl("", []),
+          "experienceSince": new FormControl( "", []),
+          "startAtProdyna": new FormControl( "", []),
+          "age": new FormControl(0, []),
+          "abstract": new FormControl("", undefined),
+        });
+      })
 
 
 

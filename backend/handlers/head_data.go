@@ -41,7 +41,7 @@ func GetHeadData(c *gin.Context) {
 // @Tags head-data
 // @Accept json
 // @Produce json
-// @Param ratings body []models.HeadDataDTO true "head data"
+// @Param headData body models.HeadDataDTO true "head data"
 // @Success 201 {object} map[string]string "message: HeadData saved successfully"
 // @Failure 400 {object} models.ErrorResponse "Invalid request payload"
 // @Failure 500 {object} models.ErrorResponse "Failed to save headData"

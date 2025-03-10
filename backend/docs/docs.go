@@ -93,14 +93,11 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "description": "head data",
-                        "name": "ratings",
+                        "name": "headData",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.HeadDataDTO"
-                            }
+                            "$ref": "#/definitions/models.HeadDataDTO"
                         }
                     }
                 ],

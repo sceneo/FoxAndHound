@@ -35,14 +35,15 @@ ip addr show
 and save it as 
 
 ```bash
-LOCAL_IP=XXX
+export LOCAL_IP=XXX
 ```
 
 then use
 
 ```bash
 docker run \
-    -e DB_HOST=192.168.178.32 \
+    --init \
+    -e DB_HOST=$LOCAL_IP \
     -e STAGE=dev \
     -p 8085:8080 \
     foxandhound_backend_local

@@ -17,6 +17,16 @@ for a release version also tag and push an image with a version like foxandhound
 docker run --init --network="host" -e BACKEND_URL=http://127.0.0.1:8080 foxandhound_webapp_local
 ```
 
+or when the when local ports are blocked get the local ip (see backend README) and use
+
+```bash
+docker run \
+    --init \
+    -e STAGE=dev \
+    -e BACKEND_URL=http://${LOCAL_IP}:8080 \
+    -p 8087:80 \
+    foxandhound_webapp_local
+```
 
 # Angular Stuff
 

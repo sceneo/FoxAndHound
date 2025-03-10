@@ -36,6 +36,7 @@ func GetEmployerRatings(ctx context.Context, userEmail string) ([]models.Employe
 			}
 			dto.RatingCandidate = &rating.RatingCandidate
 			dto.TextResponseCandidate = &rating.TextResponseCandidate
+			dto.NotApplicableCandidate = rating.NotApplicableCandidate
 	
 			dto.TimeStampEmployer = nil
 			if rating.TimeStampEmployer != nil && !rating.TimeStampEmployer.IsZero() {
@@ -44,6 +45,7 @@ func GetEmployerRatings(ctx context.Context, userEmail string) ([]models.Employe
 			}
 			dto.RatingEmployer = &rating.RatingEmployer
 			dto.TextResponseEmployer = &rating.TextResponseEmployer
+			dto.NotApplicableEmployer = rating.NotApplicableEmployer
 		}
 	
 		employerRatings = append(employerRatings, dto)
@@ -68,6 +70,7 @@ func SaveEmployerRatings(ctx context.Context, candidateRatingsEmployer []models.
 			RatingCardID: dto.RatingCardID,
 			RatingEmployer: *dto.RatingEmployer,
 			TextResponseEmployer: *dto.TextResponseEmployer,
+			NotApplicableEmployer: dto.NotApplicableEmployer,
 			TimeStampEmployer: &currentTime,
 		}
 

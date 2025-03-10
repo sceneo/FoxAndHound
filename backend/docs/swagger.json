@@ -9,6 +9,123 @@
     "host": "localhost:8080",
     "basePath": "/api",
     "paths": {
+        "/average": {
+            "get": {
+                "description": "Fetches average for every card - agreed on flag is a must",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "head-data"
+                ],
+                "summary": "Get average per card",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/head-data": {
+            "get": {
+                "description": "Fetches head data for certain candidate",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "head-data"
+                ],
+                "summary": "Get head data for candidate",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User Email",
+                        "name": "userEmail",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.HeadDataDTO"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Stores or updates head data in the database",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "head-data"
+                ],
+                "summary": "Save head data",
+                "parameters": [
+                    {
+                        "description": "head data",
+                        "name": "ratings",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.HeadDataDTO"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "message: HeadData saved successfully",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request payload",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Failed to save headData",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/rating-cards": {
             "get": {
                 "description": "Retrieves all rating cards from the database",
@@ -251,6 +368,9 @@
                 "category": {
                     "type": "string"
                 },
+                "notApplicableCandidate": {
+                    "type": "boolean"
+                },
                 "orderId": {
                     "type": "integer"
                 },
@@ -279,6 +399,12 @@
             "properties": {
                 "category": {
                     "type": "string"
+                },
+                "notApplicableCandidate": {
+                    "type": "boolean"
+                },
+                "notApplicableEmployer": {
+                    "type": "boolean"
                 },
                 "orderId": {
                     "type": "integer"
@@ -316,6 +442,32 @@
             "type": "object",
             "properties": {
                 "error": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.HeadDataDTO": {
+            "type": "object",
+            "properties": {
+                "abstract": {
+                    "type": "string"
+                },
+                "age": {
+                    "type": "integer"
+                },
+                "agreedOn": {
+                    "type": "boolean"
+                },
+                "experienceSince": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "startAtProdyna": {
+                    "type": "string"
+                },
+                "userEmail": {
                     "type": "string"
                 }
             }

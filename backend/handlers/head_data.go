@@ -13,7 +13,8 @@ import (
 // @Description Fetches head data for certain candidate
 // @Tags head-data
 // @Produce json
-// @Success 200 {array} string
+// @Param userEmail query string true "User Email"
+// @Success 200 {array} models.HeadDataDTO
 // @Failure 500 {object} models.ErrorResponse
 // @Router /head-data [get]
 func GetHeadData(c *gin.Context) {

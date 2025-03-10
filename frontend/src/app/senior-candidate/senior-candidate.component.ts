@@ -58,7 +58,7 @@ export class SeniorCandidateComponent implements OnInit {
     this.candidateRatings.forEach((rating) => {
       controls[`response_${rating.ratingCardId}`] = new FormControl(rating.textResponseCandidate || "", [Validators.required]);
       controls[`rating_${rating.ratingCardId}`] = new FormControl(rating.ratingCandidate || 0, [Validators.required]);
-      controls[`not_applicable_${rating.ratingCardId}`] = new FormControl(rating.ratingCandidate || false, undefined);
+      controls[`not_applicable_${rating.ratingCardId}`] = new FormControl(rating.notApplicableCandidate || false, undefined);
     });
 
     this.ratingForm = new FormGroup(controls);  // Assign FormGroup after initialization

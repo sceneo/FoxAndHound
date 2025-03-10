@@ -33,10 +33,12 @@ func SaveOrUpdateRating(ctx context.Context, rating *models.Rating, isCandidate 
 			updateFields["time_stamp_candidate"] = rating.TimeStampCandidate
 			updateFields["rating_candidate"] = rating.RatingCandidate
 			updateFields["text_response_candidate"] = rating.TextResponseCandidate
+			updateFields["not_applicable_candidate"] = rating.NotApplicableCandidate
 		} else {
 			updateFields["time_stamp_employer"] = rating.TimeStampEmployer
 			updateFields["rating_employer"] = rating.RatingEmployer
 			updateFields["text_response_employer"] = rating.TextResponseEmployer
+			updateFields["not_applicable_employer"] = rating.NotApplicableEmployer
 		}
 
 		err := tx.Model(&existing).Updates(updateFields).Error

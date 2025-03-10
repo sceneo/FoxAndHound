@@ -6,7 +6,7 @@ import {CommonModule} from '@angular/common';
 import {RatingSliderComponent} from '../rating-slider/rating-slider.component';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatIconModule} from '@angular/material/icon';
-import { ModelsEmployerRatingDTO, RatingEmployerService } from '../api';
+import {HeadDataService, ModelsEmployerRatingDTO, RatingEmployerService} from '../api';
 import { MatSelectModule } from '@angular/material/select';
 import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { map, Observable, of, startWith, switchMap, tap } from 'rxjs';
@@ -52,7 +52,7 @@ export class HrComponent implements OnInit {
 
   private selectedUserMail: string | null = null;
 
-  constructor(private ratingService: RatingEmployerService) {}
+  constructor(private ratingService: RatingEmployerService, private headDataService: HeadDataService) {}
 
   ngOnInit() {
     this.isLoading = true;
@@ -115,17 +115,24 @@ export class HrComponent implements OnInit {
     this.ratingForm = null;
     this.isLoading = true;
 
+
 //    this.headDataService.headDataGet(this.selectedUserMail)
 //      .subscribe(// TODO: set value in headDataForm)
     // maybe also use a datepicker here
-    this.headDataForm = new FormGroup({
-      "agreedOn": new FormControl(false, undefined),
-      "name": new FormControl("", []),
-      "experienceSince": new FormControl("", []),
-      "startAtProdyna": new FormControl("", []),
-      "age": new FormControl(0, []),
-      "abstract": new FormControl("", undefined),
-    });
+
+    this.headDataService.headDataGet(this.selectedUserMail).subscribe(headData => {
+      this.headDataForm = new FormGroup({
+        "agreedOn": new FormControl(false, undefined),
+        "name": new FormControl("", []),
+        "experienceSince": new FormControl("", []),
+        "startAtProdyna": new FormControl("", []),
+        "age": new FormControl(0, []),
+        "abstract": new FormControl("", undefined),
+      });
+    })
+
+
+
 
     this.ratingService.ratingsEmployerGet(this.selectedUserMail)
       .subscribe(ratings => {

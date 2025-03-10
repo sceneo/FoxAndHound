@@ -36,6 +36,7 @@ func GetCandidateRatings(ctx context.Context, userEmail string) ([]models.Candid
 			}
 			dto.RatingCandidate = &rating.RatingCandidate
 			dto.TextResponseCandidate = &rating.TextResponseCandidate
+			dto.NotApplicableCandidate = rating.NotApplicableCandidate
 		}
 
 		candidateRatings = append(candidateRatings, dto)
@@ -60,6 +61,7 @@ func SaveCandidateRatings(ctx context.Context, candidateRatings []models.Candida
 			RatingCardID:         dto.RatingCardID,
 			RatingCandidate:      *dto.RatingCandidate,
 			TextResponseCandidate: *dto.TextResponseCandidate,
+			NotApplicableCandidate: dto.NotApplicableCandidate,
 			TimeStampCandidate:   &currentTime,
 		}
 

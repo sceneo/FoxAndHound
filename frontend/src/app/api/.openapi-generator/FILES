@@ -2,6 +2,7 @@
 README.md
 api.module.ts
 api/api.ts
+api/headData.service.ts
 api/ratingCandidate.service.ts
 api/ratingCard.service.ts
 api/ratingEmployer.service.ts
@@ -13,6 +14,7 @@ model/models.ts
 model/modelsCandidateRatingDTO.ts
 model/modelsEmployerRatingDTO.ts
 model/modelsErrorResponse.ts
+model/modelsHeadDataDTO.ts
 model/modelsRatingCard.ts
 param.ts
 variables.ts

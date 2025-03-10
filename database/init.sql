@@ -1,5 +1,6 @@
 DROP TABLE IF EXISTS rating_cards;
 DROP TABLE IF EXISTS ratings;
+DROP TABLE IF EXISTS head_data;
 
 CREATE TABLE IF NOT EXISTS rating_cards (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -19,6 +20,17 @@ CREATE TABLE ratings (
     rating_employer INT NOT NULL,
     text_response_employer TEXT
 );
+
+CREATE TABLE IF NOT EXISTS head_data (
+    user_email VARCHAR(255) NOT NULL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    experience_since TIMESTAMP NULL,
+    start_at_prodyna TIMESTAMP NULL,
+    age INT NOT NULL,
+    abstract TEXT NOT NULL,
+    agreed_on BOOLEAN NOT NULL
+    );
+
 
 START TRANSACTION;
 

@@ -122,7 +122,7 @@ export class HrComponent implements OnInit {
 
     this.headDataService.headDataGet(this.selectedUserMail).subscribe(headData => {
       this.headDataForm = new FormGroup({
-        "agreedOn": new FormControl(false, undefined),
+        "agreedOn": new FormControl(headData, undefined),
         "name": new FormControl("", []),
         "experienceSince": new FormControl("", []),
         "startAtProdyna": new FormControl("", []),

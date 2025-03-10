@@ -160,9 +160,9 @@ export class HeadDataService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public headDataGet(userEmail: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<ModelsHeadDataDTO>>;
-    public headDataGet(userEmail: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<ModelsHeadDataDTO>>>;
-    public headDataGet(userEmail: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<ModelsHeadDataDTO>>>;
+    public headDataGet(userEmail: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<ModelsHeadDataDTO>;
+    public headDataGet(userEmail: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<ModelsHeadDataDTO>>;
+    public headDataGet(userEmail: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<ModelsHeadDataDTO>>;
     public headDataGet(userEmail: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (userEmail === null || userEmail === undefined) {
             throw new Error('Required parameter userEmail was null or undefined when calling headDataGet.');
@@ -211,7 +211,7 @@ export class HeadDataService {
         }
 
         let localVarPath = `/head-data`;
-        return this.httpClient.request<Array<ModelsHeadDataDTO>>('get', `${this.configuration.basePath}${localVarPath}`,
+        return this.httpClient.request<ModelsHeadDataDTO>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 params: localVarQueryParameters,

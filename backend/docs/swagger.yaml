@@ -124,9 +124,7 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/models.HeadDataDTO'
-            type: array
+            $ref: '#/definitions/models.HeadDataDTO'
         "500":
           description: Internal Server Error
           schema:

@@ -1,3 +1,4 @@
+
 <form [formGroup]="candidatesForm" class="candidate-form margin-offset">
   <mat-form-field class="full-width">
     <mat-label>Senior candidate</mat-label>
@@ -16,7 +17,7 @@
   </mat-form-field>
 </form>
 
-<div *ngIf="showData()">
+<div *ngIf="showData()" class="screen">
   <h2 class="category-title">General Data</h2>
 
   <div class="card">
@@ -45,9 +46,19 @@
   </div>
 
   <h2 class="category-title">Performance</h2>
-
-
-
+  <div class="rating-table">
+    <ng-container *ngFor="let ratingCard of currentCandidate?.ratings">
+      <div class="rating-row-title">
+        {{ ratingCard.category }}
+      </div>
+      <div class="rating-graphic">
+        <app-rating-graphic
+          [currentRating]="getCurrentRating(ratingCard)"
+          [comparisonRating]="getAverageRating(ratingCard)">
+        </app-rating-graphic>
+      </div>
+    </ng-container>
+  </div>
 </div>
 
 

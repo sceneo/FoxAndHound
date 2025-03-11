@@ -1,3 +1,30 @@
+$color-primary: #18BEC1;
+
 .card {
   padding: 12px 12px 12px 12px
+}
+
+.rating-table {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px;
+  align-items: center;
+}
+
+.rating-category {
+  font-weight: bold;
+}
+
+.rating-graphic {
+  display: flex;
+  justify-content: start;
+}
+
+.rating-row-title {
+  color: $color-primary;
+}
+
+.screen {
+  padding-top: 24px;
+  padding-bottom: 36px;
 }

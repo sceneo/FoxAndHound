@@ -9,9 +9,10 @@ import {
   HeadDataService, ManagementAverageService,
   ManagementSummaryService,
   ModelsHeadDataDTO, ModelsManagementAverageDTO,
-  ModelsManagementSummaryDTO
+  ModelsManagementSummaryDTO, ModelsManagementSummaryRatingDTO
 } from '../api';
 import {CommonModule} from '@angular/common';
+import {RatingGraphicComponent} from '../rating-graphic/rating-graphic.component';
 
 @Component({
   selector: 'app-root',
@@ -24,7 +25,8 @@ import {CommonModule} from '@angular/common';
     MatAutocompleteTrigger,
     MatInput,
     MatLabel,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    RatingGraphicComponent
   ],
   templateUrl: './management-dashboard.component.html',
   standalone: true,
@@ -116,5 +118,14 @@ export class ManagementDashboardComponent implements OnInit {
 
   abstractPrint(): string {
     return this.currentHeadData?.abstract || "";
+  }
+
+  getCurrentRating(ratingCard: ModelsManagementSummaryRatingDTO): number {
+    return ratingCard?.rating ?? 0;
+  }
+
+  getAverageRating(ratingCard: ModelsManagementSummaryRatingDTO): number {
+    // TODO: find the number in the average rating for the category. currently there is no data and we cannot use it
+    return Math.random() * 120;
   }
 }

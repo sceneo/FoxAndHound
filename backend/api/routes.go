@@ -18,16 +18,18 @@ func SetupRoutes(router *gin.Engine) {
 
 		api.GET("/ratings/employer", handlers.GetEmployerRatings)
 
+		api.GET("/ratings/average", handlers.GetAverage)
+
 		api.POST("/ratings/employer", handlers.SaveEmployerRatings)
 
         api.GET("/head-data", handlers.GetHeadData)
 
         api.POST("/head-data", handlers.SaveHeadData)
 
-		api.GET("/average", handlers.GetAverage)
-
 		api.GET("/management/agreed-candidates", handlers.GetAgreedCandidates)
 
 		api.GET("/management/summary", handlers.GetManagementSummary)
+
+		api.GET("/management/average", handlers.GetManagementAverage)
 	}
 }

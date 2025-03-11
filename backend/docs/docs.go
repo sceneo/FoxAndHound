@@ -15,35 +15,6 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/average": {
-            "get": {
-                "description": "Fetches average for every card - agreed on flag is a must",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "head-data"
-                ],
-                "summary": "Get average per card",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/models.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/head-data": {
             "get": {
                 "description": "Fetches head data for certain candidate",
@@ -155,6 +126,35 @@ const docTemplate = `{
                 }
             }
         },
+        "/management/average": {
+            "get": {
+                "description": "Fetches management average for cards",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "management-average"
+                ],
+                "summary": "Get management average for cards",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ManagementAverageDTO"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/management/summary": {
             "get": {
                 "description": "Fetches management summary for certain candidate",
@@ -162,7 +162,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "managment-summary"
+                    "management-summary"
                 ],
                 "summary": "Get management summary for candidate",
                 "parameters": [
@@ -207,6 +207,35 @@ const docTemplate = `{
                             "type": "array",
                             "items": {
                                 "$ref": "#/definitions/models.RatingCard"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/ratings/average": {
+            "get": {
+                "description": "Fetches average for every card - agreed on flag is a must",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "head-data"
+                ],
+                "summary": "Get average per card",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.AverageRatingDTO"
                             }
                         }
                     },
@@ -426,6 +455,20 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "models.AverageRatingDTO": {
+            "type": "object",
+            "properties": {
+                "NumberOfAgreedRatings": {
+                    "type": "integer"
+                },
+                "average": {
+                    "type": "number"
+                },
+                "ratingCardId": {
+                    "type": "integer"
+                }
+            }
+        },
         "models.CandidateRatingDTO": {
             "type": "object",
             "properties": {
@@ -457,6 +500,31 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        },
+        "models.CategoryEnum": {
+            "type": "string",
+            "enum": [
+                "Performance",
+                "Technical Skillset",
+                "Technical Predispositions",
+                "Sales",
+                "Recruiting",
+                "Teamwork",
+                "Coaching",
+                "Prodyna Insights",
+                "Overall"
+            ],
+            "x-enum-varnames": [
+                "CategoryPerformance",
+                "CategoryTechnicalSkillset",
+                "CategoryTechnicalPredisposition",
+                "CategorySales",
+                "CategoryRecruiting",
+                "CategoryTeamwork",
+                "CategoryCoaching",
+                "CategoryProdynaInsights",
+                "CategoryOverall"
+            ]
         },
         "models.EmployerRatingDTO": {
             "type": "object",
@@ -536,11 +604,40 @@ const docTemplate = `{
                 }
             }
         },
+        "models.ManagementAverageDTO": {
+            "type": "object",
+            "properties": {
+                "average": {
+                    "type": "number"
+                },
+                "category": {
+                    "$ref": "#/definitions/models.CategoryEnum"
+                }
+            }
+        },
         "models.ManagementSummaryDTO": {
             "type": "object",
             "properties": {
+                "ratings": {
+                    "description": "Array of management ratings",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ManagementSummaryRatingDTO"
+                    }
+                },
                 "userEmail": {
                     "type": "string"
+                }
+            }
+        },
+        "models.ManagementSummaryRatingDTO": {
+            "type": "object",
+            "properties": {
+                "category": {
+                    "$ref": "#/definitions/models.CategoryEnum"
+                },
+                "rating": {
+                    "type": "number"
                 }
             }
         },

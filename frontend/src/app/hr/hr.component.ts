@@ -6,7 +6,13 @@ import {CommonModule} from '@angular/common';
 import {RatingSliderComponent} from '../rating-slider/rating-slider.component';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatIconModule} from '@angular/material/icon';
-import {HeadDataService, ModelsEmployerRatingDTO, ModelsHeadDataDTO, RatingEmployerService} from '../api';
+import {
+  HeadDataService,
+  ModelsAverageRatingDTO,
+  ModelsEmployerRatingDTO,
+  ModelsHeadDataDTO,
+  RatingEmployerService
+} from '../api';
 import { MatSelectModule } from '@angular/material/select';
 import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { map, Observable, of, startWith, switchMap, tap } from 'rxjs';
@@ -43,6 +49,7 @@ export class HrComponent implements OnInit {
 
   headDataForm: FormGroup | null = null;
   ratingForm: FormGroup | null = null;
+  averageRating: ModelsAverageRatingDTO[] = [];
   candidatesForm: FormGroup  = new FormGroup({
     "userEmail": new FormControl("", [Validators.email, Validators.required]),
     "hideCandidateInfo": new FormControl(true, []),
@@ -56,6 +63,10 @@ export class HrComponent implements OnInit {
 
   ngOnInit() {
     this.isLoading = true;
+
+    this.headDataService.ratingsAverageGet().subscribe( average => {
+      this.averageRating = average;
+    })
 
     this.filteredCandidates = this.ratingService.ratingsEmployerCandidatesGet().pipe(
       tap(users => {
@@ -156,7 +167,6 @@ export class HrComponent implements OnInit {
 
         const controls: Record<string, FormControl> = {};
 
-        // TODO: we need to load the average rating. currently we randomly pick a number
         ratings.forEach((rating) => {
           controls[`response_candidate_${rating.ratingCardId}`] = new FormControl({ value: rating.textResponseCandidate || "", disabled: true }, []);
           controls[`rating_candidate_${rating.ratingCardId}`] = new FormControl({ value: rating.ratingCandidate || 0, disabled: true }, []);
@@ -164,12 +174,20 @@ export class HrComponent implements OnInit {
           controls[`response_employer_${rating.ratingCardId}`] = new FormControl(rating.textResponseEmployer || "", [Validators.required]);
           controls[`rating_employer_${rating.ratingCardId}`] = new FormControl(rating.ratingEmployer || 0, [Validators.required]);
           controls[`not_applicable_employer_${rating.ratingCardId}`] = new FormControl(rating.notApplicableEmployer || false, undefined);
-          controls[`average_rating_${rating.ratingCardId}`] = new FormControl(Math.random() * 120, []);
+          controls[`average_rating_${rating.ratingCardId}`] = new FormControl(this.getAverageRating(rating.ratingCardId), []);
         });
         this.ratingForm = new FormGroup(controls);
         this.isLoading = false;
         this.employerRatings = ratings;
     });
+  }
+
+  private getAverageRating(ratingCardId: number | undefined): number {
+    // TODO: find the number in the average rating for the ratingCardId. currently there is no data and we cannot use it
+ //   return ratingCardId !== undefined
+ //   ? this.averageRating?.find(average => average?.ratingCardId === ratingCardId)?.average | Math.random() * 120
+ //   : 0;
+    return Math.random() * 120;
   }
 
   private _filter(value: string): string[] {

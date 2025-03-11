@@ -1,6 +1,6 @@
 package models
 
 type ManagementSummaryDTO struct {
-	UserEmail string `json:"userEmail"`
-	// TODO: Fill with live
+	UserEmail               string                       `json:"userEmail"`
+	ManagementRatingSummary []ManagementSummaryRatingDTO `json:"ratings"` // Array of management ratings
 }

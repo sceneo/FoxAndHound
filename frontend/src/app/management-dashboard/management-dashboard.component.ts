@@ -1,13 +1,16 @@
 import {Component, OnInit} from '@angular/core';
 import {MatFormField, MatLabel} from '@angular/material/form-field';
-import {MatOption, MatSelect} from '@angular/material/select';
+import {MatOption} from '@angular/material/select';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatAutocomplete, MatAutocompleteSelectedEvent, MatAutocompleteTrigger} from '@angular/material/autocomplete';
-import {MatButton} from '@angular/material/button';
 import {MatInput} from '@angular/material/input';
-import {MatSlideToggle} from '@angular/material/slide-toggle';
 import {map, Observable, of, startWith, switchMap, tap} from 'rxjs';
-import {HeadDataService, ManagmentSummaryService, ModelsHeadDataDTO, ModelsManagementSummaryDTO} from '../api';
+import {
+  HeadDataService, ManagementAverageService,
+  ManagementSummaryService,
+  ModelsHeadDataDTO, ModelsManagementAverageDTO,
+  ModelsManagementSummaryDTO
+} from '../api';
 import {CommonModule} from '@angular/common';
 
 @Component({
@@ -35,16 +38,21 @@ export class ManagementDashboardComponent implements OnInit {
   });
 
   candidates: string[] = [];
+  managementAverage: ModelsManagementAverageDTO[] = [];
   filteredCandidates: Observable<string[]> = of([]);
   currentCandidate: ModelsManagementSummaryDTO | null = null;
   allHeadData: ModelsHeadDataDTO[] = [];
   currentHeadData: ModelsHeadDataDTO | undefined = undefined;
   private selectedUserMail: string | null = null;
 
-  constructor(private headDataService: HeadDataService, private managementService: ManagmentSummaryService) {
+  constructor(private headDataService: HeadDataService, private managementService: ManagementSummaryService, private managementAverageService: ManagementAverageService) {
   }
   ngOnInit() {
     this.isLoading = true;
+
+    this.managementAverageService.managementAverageGet().subscribe( average => {
+        this.managementAverage = average;
+      })
 
     this.filteredCandidates = this.headDataService.managementAgreedCandidatesGet().pipe(
       tap(headDataSets => {

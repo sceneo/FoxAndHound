@@ -1,5 +1,14 @@
 basePath: /api
 definitions:
+  models.AverageRatingDTO:
+    properties:
+      NumberOfAgreedRatings:
+        type: integer
+      average:
+        type: number
+      ratingCardId:
+        type: integer
+    type: object
   models.CandidateRatingDTO:
     properties:
       category:
@@ -21,6 +30,28 @@ definitions:
       userEmail:
         type: string
     type: object
+  models.CategoryEnum:
+    enum:
+    - Performance
+    - Technical Skillset
+    - Technical Predispositions
+    - Sales
+    - Recruiting
+    - Teamwork
+    - Coaching
+    - Prodyna Insights
+    - Overall
+    type: string
+    x-enum-varnames:
+    - CategoryPerformance
+    - CategoryTechnicalSkillset
+    - CategoryTechnicalPredisposition
+    - CategorySales
+    - CategoryRecruiting
+    - CategoryTeamwork
+    - CategoryCoaching
+    - CategoryProdynaInsights
+    - CategoryOverall
   models.EmployerRatingDTO:
     properties:
       category:
@@ -72,10 +103,29 @@ definitions:
       userEmail:
         type: string
     type: object
+  models.ManagementAverageDTO:
+    properties:
+      average:
+        type: number
+      category:
+        $ref: '#/definitions/models.CategoryEnum'
+    type: object
   models.ManagementSummaryDTO:
     properties:
+      ratings:
+        description: Array of management ratings
+        items:
+          $ref: '#/definitions/models.ManagementSummaryRatingDTO'
+        type: array
       userEmail:
         type: string
+    type: object
+  models.ManagementSummaryRatingDTO:
+    properties:
+      category:
+        $ref: '#/definitions/models.CategoryEnum'
+      rating:
+        type: number
     type: object
   models.RatingCard:
     properties:
@@ -95,25 +145,6 @@ info:
   title: Fox & Hound API
   version: "1.0"
 paths:
-  /average:
-    get:
-      description: Fetches average for every card - agreed on flag is a must
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              type: string
-            type: array
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/models.ErrorResponse'
-      summary: Get average per card
-      tags:
-      - head-data
   /head-data:
     get:
       description: Fetches head data for certain candidate
@@ -187,6 +218,25 @@ paths:
       summary: Get agreed candidates
       tags:
       - head-data
+  /management/average:
+    get:
+      description: Fetches management average for cards
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ManagementAverageDTO'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Get management average for cards
+      tags:
+      - management-average
   /management/summary:
     get:
       description: Fetches management summary for certain candidate
@@ -209,7 +259,7 @@ paths:
             $ref: '#/definitions/models.ErrorResponse'
       summary: Get management summary for candidate
       tags:
-      - managment-summary
+      - management-summary
   /rating-cards:
     get:
       description: Retrieves all rating cards from the database
@@ -229,6 +279,25 @@ paths:
       summary: Get all rating cards
       tags:
       - rating-card
+  /ratings/average:
+    get:
+      description: Fetches average for every card - agreed on flag is a must
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.AverageRatingDTO'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Get average per card
+      tags:
+      - head-data
   /ratings/candidate:
     get:
       description: Fetches rating cards and enriches them with existing ratings for

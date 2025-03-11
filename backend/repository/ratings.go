@@ -71,6 +71,18 @@ func GetRatingsByEmails(ctx context.Context, userEmails []string) ([]models.Rati
 	return ratings, nil
 }
 
+func GetRatingsByUserEmail(ctx context.Context, userEmail string) ([]models.Rating, error) {
+	var ratings []models.Rating
+	result := config.DB.WithContext(ctx).
+		Where("user_email = ?", userEmail).
+		Find(&ratings)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return ratings, nil
+}
+
 func GetSeniorCandidates(ctx context.Context) ([]string, error) {
 	var userEmails []string
 	err := config.DB.WithContext(ctx).

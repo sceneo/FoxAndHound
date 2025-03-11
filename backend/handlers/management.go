@@ -29,7 +29,7 @@ func GetAgreedCandidates(c *gin.Context) {
 // GetManagementSummary godoc
 // @Summary Get management summary for candidate
 // @Description Fetches management summary for certain candidate
-// @Tags managment-summary
+// @Tags management-summary
 // @Produce json
 // @Param userEmail query string true "User Email"
 // @Success 200 {object} models.ManagementSummaryDTO
@@ -51,4 +51,24 @@ func GetManagementSummary(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, managementSummary)
+}
+
+// GetManagementAverage godoc
+// @Summary Get management average for cards
+// @Description Fetches management average for cards
+// @Tags management-average
+// @Produce json
+// @Success 200 {array} models.ManagementAverageDTO
+// @Failure 500 {object} models.ErrorResponse
+// @Router /management/average [get]
+func GetManagementAverage(c *gin.Context) {
+
+	managementAverage, err := services.GetManagementAverage(c.Request.Context())
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch management average"})
+		return
+	}
+
+	c.JSON(http.StatusOK, managementAverage)
 }

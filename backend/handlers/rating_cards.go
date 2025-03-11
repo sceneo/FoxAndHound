@@ -2,9 +2,9 @@ package handlers
 
 import (
 	"backend/repository"
-	"net/http"
+	"backend/services"
 	"backend/models"
-
+	"net/http"
 	"github.com/gin-gonic/gin"
 )
 
@@ -23,4 +23,24 @@ func GetRatingCards(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, data)
+}
+
+// GetAverage godoc
+// @Summary Get average per card
+// @Description Fetches average for every card - agreed on flag is a must
+// @Tags head-data
+// @Produce json
+// @Success 200 {array} models.AverageRatingDTO
+// @Failure 500 {object} models.ErrorResponse
+// @Router /ratings/average [get]
+func GetAverage(c *gin.Context) {
+
+	averageRatings, err := services.GetAverageRatings(c.Request.Context())
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch headData"})
+		return
+	}
+
+	c.JSON(http.StatusOK, averageRatings)
 }

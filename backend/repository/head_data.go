@@ -24,7 +24,8 @@ func GetHeadDataWithAgreement(ctx context.Context) ([]models.HeadData, error) {
 	var headData []models.HeadData
 	result := config.DB.WithContext(ctx).
 		Model(&models.HeadData{}).
-		Where("agreed_on = ?", true)
+		Where("agreed_on = ?", true).
+		Find(&headData)
 
 	if result.Error != nil {
 		return nil, result.Error

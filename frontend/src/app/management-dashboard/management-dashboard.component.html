@@ -1,2 +1,18 @@
+<form [formGroup]="candidatesForm" class="candidate-form margin-offset">
+  <mat-form-field class="full-width">
+    <mat-label>Senior candidate</mat-label>
 
-<p class="color-primary"> Management needs to tell us what they want and need </p>
+    <input class="color-primary"
+           type="text"
+           matInput
+           formControlName="userEmail"
+           [matAutocomplete]="auto">
+
+    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onCandidateChange($event)">
+      @for (candidate of filteredCandidates | async; track candidate) {
+      <mat-option [value]="candidate">{{ candidate }}</mat-option>
+      }
+    </mat-autocomplete>
+  </mat-form-field>
+
+</form>

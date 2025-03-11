@@ -54,25 +54,23 @@ func SaveOrUpdateHeadData(ctx context.Context, headData models.HeadData) error {
 	result := tx.Where("user_email = ?", headData.UserEmail).First(&existing)
 
 	if result.RowsAffected > 0 {
-		updateFields := map[string]interface{}{}
+		updateFields := map[string]interface{}{
+			"name":              headData.Name,
+			"experience_since":  headData.ExperienceSince,
+			"start_at_prodyna":  headData.StartAtProdyna,
+			"age":               headData.Age,
+			"abstract":          headData.Abstract,
+			"agreed_on":         headData.AgreedOn,
+		}
 
-		updateFields["name"] = headData.Name
-		updateFields["experience_since"] = headData.ExperienceSince
-		updateFields["start_at_prodyna"] = headData.StartAtProdyna
-		updateFields["age"] = headData.Age
-		updateFields["abstract"] = headData.Abstract
-		updateFields["agreed_on"] = headData.AgreedOn
-
-		err := tx.Model(&existing).Updates(updateFields).Error
-
+		err := tx.Model(&existing).Where("user_email = ?", headData.UserEmail).Updates(updateFields).Error
 		if err != nil {
 			tx.Rollback()
 			log.Println("❌ Error updating head-data:", err)
 			return err
 		}
 	} else {
-		err := tx.Create(headData).Error
-
+		err := tx.Create(&headData).Error
 		if err != nil {
 			tx.Rollback()
 			log.Println("❌ Error creating head-data:", err)
@@ -82,3 +80,4 @@ func SaveOrUpdateHeadData(ctx context.Context, headData models.HeadData) error {
 
 	return tx.Commit().Error
 }
+

@@ -14,5 +14,18 @@
       }
     </mat-autocomplete>
   </mat-form-field>
-
 </form>
+
+<div *ngIf="showData()">
+  <h2 class="category-title">General Data</h2>
+
+  <div class="card">
+    <div class="subheading">Name</div>
+    <p class="">{{namePrint()}}</p>
+  </div>
+
+  <h2 class="category-title">Performance</h2>
+
+</div>
+
+

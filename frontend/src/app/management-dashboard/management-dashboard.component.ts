@@ -7,7 +7,7 @@ import {MatButton} from '@angular/material/button';
 import {MatInput} from '@angular/material/input';
 import {MatSlideToggle} from '@angular/material/slide-toggle';
 import {map, Observable, of, startWith, switchMap, tap} from 'rxjs';
-import {HeadDataService, ManagmentSummaryService} from '../api';
+import {HeadDataService, ManagmentSummaryService, ModelsHeadDataDTO, ModelsManagementSummaryDTO} from '../api';
 import {CommonModule} from '@angular/common';
 
 @Component({
@@ -39,7 +39,9 @@ export class ManagementDashboardComponent implements OnInit {
 
   candidates: string[] = [];
   filteredCandidates: Observable<string[]> = of([]);
-
+  currentCandidate: ModelsManagementSummaryDTO | null = null;
+  allHeadData: ModelsHeadDataDTO[] = [];
+  currentHeadData: ModelsHeadDataDTO | undefined = undefined;
   private selectedUserMail: string | null = null;
 
   constructor(private headDataService: HeadDataService, private managementService: ManagmentSummaryService) {
@@ -48,6 +50,9 @@ export class ManagementDashboardComponent implements OnInit {
     this.isLoading = true;
 
     this.filteredCandidates = this.headDataService.managementAgreedCandidatesGet().pipe(
+      tap(headDataSets => {
+        this.allHeadData = headDataSets;
+      }),
       tap(headDataSets => {
         this.candidates = headDataSets
           .map(headData => headData.userEmail || "");
@@ -60,7 +65,7 @@ export class ManagementDashboardComponent implements OnInit {
           map(value => this._filter(value || ''))
         );
       })
-    );
+    )
   }
 
   private _filter(value: string): string[] {
@@ -72,10 +77,23 @@ export class ManagementDashboardComponent implements OnInit {
   }
 
   onCandidateChange(event: MatAutocompleteSelectedEvent): void {
-    this.loadCandidateData(String(event.option.value));
+    this.selectedUserMail = String(event.option.value);
+    this.currentHeadData = this.allHeadData.find(headData => headData.userEmail === this.selectedUserMail);
+    this.loadCandidateData(this.selectedUserMail);
   }
 
-  private loadCandidateData(email: String) {
-    window.alert("load " + email); // TODO
+  private loadCandidateData(email: string) {
+    this.managementService.managementSummaryGet(email)
+      .subscribe(managementSummary => {
+        this.currentCandidate = managementSummary;
+    })
+  }
+
+  showData(): boolean {
+    return this.selectedUserMail !== "" && this.currentHeadData !== undefined;
+  }
+
+  namePrint(): string {
+    return this.currentHeadData?.name || "";
   }
 }

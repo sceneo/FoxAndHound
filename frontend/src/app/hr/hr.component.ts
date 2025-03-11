@@ -126,11 +126,6 @@ export class HrComponent implements OnInit {
     this.ratingForm = null;
     this.isLoading = true;
 
-
-//    this.headDataService.headDataGet(this.selectedUserMail)
-//      .subscribe(// TODO: set value in headDataForm)
-    // maybe also use a datepicker here
-
     this.headDataService.headDataGet(this.selectedUserMail).subscribe(headData => {
       this.headDataForm = new FormGroup({
         "agreedOn": new FormControl(headData.agreedOn || false, undefined),

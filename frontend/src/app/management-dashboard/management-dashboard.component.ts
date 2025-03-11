@@ -15,15 +15,12 @@ import {CommonModule} from '@angular/common';
   imports: [
     CommonModule,
     MatFormField,
-    MatSelect,
     MatOption,
     FormsModule,
     MatAutocomplete,
     MatAutocompleteTrigger,
-    MatButton,
     MatInput,
     MatLabel,
-    MatSlideToggle,
     ReactiveFormsModule
   ],
   templateUrl: './management-dashboard.component.html',
@@ -95,5 +92,21 @@ export class ManagementDashboardComponent implements OnInit {
 
   namePrint(): string {
     return this.currentHeadData?.name || "";
+  }
+
+  agePrint(): string {
+    return String(this.currentHeadData?.age) || "";
+  }
+
+  experiencePrint(): string {
+    return this.currentHeadData?.experienceSince || "";
+  }
+
+  prodynaStartPrint(): string {
+    return this.currentHeadData?.startAtProdyna || "";
+  }
+
+  abstractPrint(): string {
+    return this.currentHeadData?.abstract || "";
   }
 }

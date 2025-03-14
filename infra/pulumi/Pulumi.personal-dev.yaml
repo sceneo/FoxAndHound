@@ -6,8 +6,8 @@ config:
   foxnhound:mysql-adminLogin: sqladmin_jH5JKsj_54KJH
   foxnhound:vm-adminLogin: exampleadmin
   foxnhound:container-registry-base-path: DOCKER|johannesrosskopp/my_private_repository
-  foxnhound:webapp-image-tag: foxandhound_webapp_beta_1
-  foxnhound:backend-image-tag: foxandhound_backend_beta_1
+  foxnhound:webapp-image-tag: foxandhound_webapp_beta_3
+  foxnhound:backend-image-tag: foxandhound_backend_beta_3
   foxnhound:mysql-adminSecret:
     secure: AAABAAn2C4AyDmS1ItL1YDJ81aRsghyG4XzfARt7b0WsXGO8vutVwUiFbs7kXkjBKSDhFhRhtA4=
   foxnhound:vm-adminSecret:

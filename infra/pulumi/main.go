@@ -20,13 +20,11 @@ const (
 
 func main() {
 	pulumi.Run(func(ctx *pulumi.Context) error {
-		// Create an Azure Resource Group
 		resourceGroup, err := resources.NewResourceGroup(ctx, "foxnhound-rg", nil)
 		if err != nil {
 			return err
 		}
 
-		// Create a Virtual Network
 		vnet, err := network.NewVirtualNetwork(ctx, "foxnhound-vnet", &network.VirtualNetworkArgs{
 			ResourceGroupName: resourceGroup.Name,
 			AddressSpace: &network.AddressSpaceArgs{
@@ -117,8 +115,6 @@ func createVm(args VmArgs) VmReturn {
 	}
 
 	vmPublicIp, err := network.NewPublicIPAddress(args.ctx, "foxnhound-vm-public-ip", &network.PublicIPAddressArgs{
-		// Location:            pulumi.String("eastus"),
-		// PublicIpAddressName: pulumi.String("test-ip"),
 		ResourceGroupName: args.resourceGroup.Name,
 	})
 	if err != nil {
@@ -126,8 +122,6 @@ func createVm(args VmArgs) VmReturn {
 	}
 
 	vmNetworkInterface, err := network.NewNetworkInterface(args.ctx, "foxnhound-vm-network-interface", &network.NetworkInterfaceArgs{
-		// DisableTcpStateTracking:     pulumi.Bool(true),
-		// EnableAcceleratedNetworking: pulumi.Bool(true),
 		IpConfigurations: network.NetworkInterfaceIPConfigurationArray{
 			&network.NetworkInterfaceIPConfigurationArgs{
 				Name: pulumi.String("ipconfig1"),
@@ -139,8 +133,6 @@ func createVm(args VmArgs) VmReturn {
 				},
 			},
 		},
-		// Location:             pulumi.String("eastus"),
-		// NetworkInterfaceName: pulumi.String("test-nic"),
 		ResourceGroupName: args.resourceGroup.Name,
 	})
 	if err != nil {
@@ -149,7 +141,6 @@ func createVm(args VmArgs) VmReturn {
 
 	adminLogin := config.Require("vm-adminLogin")
 	adminSecret := config.Require("vm-adminSecret")
-	// Create the Azure Stack HCI Virtual Machine
 	vm, err := compute.NewVirtualMachine(args.ctx, "foxnhound-vm", &compute.VirtualMachineArgs{
 		ResourceGroupName: args.resourceGroup.Name,
 		NetworkProfile: compute.NetworkProfileArgs{
@@ -166,7 +157,6 @@ func createVm(args VmArgs) VmReturn {
 			ComputerName:  pulumi.String("foxnhound-vm"),
 			AdminUsername: pulumi.String(adminLogin),
 			AdminPassword: pulumi.String(adminSecret),
-			// CustomData:    pulumi.String(b64Encode("#!/bin/bash\nsudo apt-get update\nsudo apt-get install -y mysql-client")),
 		},
 		StorageProfile: &compute.StorageProfileArgs{
 			OsDisk: compute.OSDiskArgs{
@@ -207,7 +197,6 @@ type BackendReturn struct {
 func createBackend(args BackendArgs) BackendReturn {
 	config := config.New(args.ctx, "")
 
-	// Cretae a new delegated subnet
 	subnet, err := network.NewSubnet(args.ctx, "foxnhound-sn-backend", &network.SubnetArgs{
 		Delegations: network.DelegationArray{
 			&network.DelegationArgs{
@@ -238,16 +227,18 @@ func createBackend(args BackendArgs) BackendReturn {
 		return BackendReturn{err: err}
 	}
 
-	containerRegistryLogin := config.Require("backend-container-registry-login")
-	containerRegistryPassword := config.Require("backend-container-registry-password")
-	containerRegistryUrl := config.Require("backend-container-registry-url")
+	containerRegistryLogin := config.Require("container-registry-login")
+	containerRegistryPassword := config.Require("container-registry-password")
+	containerRegistryUrl := config.Require("container-registry-url")
+	containerRegistryBasePath := config.Require("container-registry-base-path")
+	backendImageTag := config.Require("backend-image-tag")
 	webApp, err := web.NewWebApp(args.ctx, "foxnhound-backend", &web.WebAppArgs{
 		ResourceGroupName: args.resourceGroup.Name,
 		Location:          args.resourceGroup.Location,
 		ServerFarmId:      appServicePlan.ID(),
 		SiteConfig: &web.SiteConfigArgs{
 			AlwaysOn:       pulumi.Bool(true),
-			LinuxFxVersion: pulumi.String("DOCKER|johannesrosskopp/my_private_repository:foxandhound_backend_dev_latest"),
+			LinuxFxVersion: pulumi.String(containerRegistryBasePath + ":" + backendImageTag),
 			AppSettings: web.NameValuePairArray{
 				&web.NameValuePairArgs{
 					Name:  pulumi.String("DOCKER_REGISTRY_SERVER_URL"),
@@ -315,17 +306,20 @@ type FrontendReturn struct {
 
 func createFrontend(args FrontendArgs) FrontendReturn {
 	config := config.New(args.ctx, "")
-	containerRegistryLogin := config.Require("backend-container-registry-login")
-	containerRegistryPassword := config.Require("backend-container-registry-password")
-	containerRegistryUrl := config.Require("backend-container-registry-url")
-	// Create a Web App running a container on Linux
+	containerRegistryLogin := config.Require("container-registry-login")
+	containerRegistryPassword := config.Require("container-registry-password")
+	containerRegistryUrl := config.Require("container-registry-url")
+	containerRegistryBasePath := config.Require("container-registry-base-path")
+	webappImageTag := config.Require("webapp-image-tag")
+	backendUrl := pulumi.Sprintf("https://%s", args.defaultHostname)
+
 	webApp, err := web.NewWebApp(args.ctx, "foxnhound-webapp", &web.WebAppArgs{
 		ResourceGroupName: args.resourceGroup.Name,
 		Location:          args.resourceGroup.Location,
 		ServerFarmId:      args.appServicePlan.ID(),
 		SiteConfig: &web.SiteConfigArgs{
 			AlwaysOn:       pulumi.Bool(true),
-			LinuxFxVersion: pulumi.String("DOCKER|johannesrosskopp/my_private_repository:foxandhound_webapp_dev_latest"),
+			LinuxFxVersion: pulumi.String(containerRegistryBasePath + ":" + webappImageTag),
 			AppSettings: web.NameValuePairArray{
 				&web.NameValuePairArgs{
 					Name:  pulumi.String("DOCKER_REGISTRY_SERVER_URL"),
@@ -340,8 +334,8 @@ func createFrontend(args FrontendArgs) FrontendReturn {
 					Value: pulumi.String(containerRegistryPassword),
 				},
 				&web.NameValuePairArgs{
-					Name:  pulumi.String("BACKEND_URL"),
-					Value: args.defaultHostname,
+					Name: pulumi.String("BACKEND_URL"),
+					Value: backendUrl,
 				},
 				&web.NameValuePairArgs{
 					Name:  pulumi.String("STAGE"),

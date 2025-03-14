@@ -1,0 +1,18 @@
+config:
+  azure-native:location: swedencentral
+  foxnhound:azureUserEMail: j.rosskopp@gmx.de
+  foxnhound:azureUserSid: 1685f20c-0f20-4999-aaa0-550994bcc380
+  foxnhound:azureUserTenantId: e467b6d8-cf62-4e59-9a87-758ef858aeb6
+  foxnhound:mysql-adminLogin: sqladmin_jH5JKsj_54KJH
+  foxnhound:vm-adminLogin: exampleadmin
+  foxnhound:container-registry-base-path: DOCKER|johannesrosskopp/my_private_repository
+  foxnhound:webapp-image-tag: foxandhound_webapp_beta_1
+  foxnhound:backend-image-tag: foxandhound_backend_beta_1
+  foxnhound:mysql-adminSecret:
+    secure: AAABAAn2C4AyDmS1ItL1YDJ81aRsghyG4XzfARt7b0WsXGO8vutVwUiFbs7kXkjBKSDhFhRhtA4=
+  foxnhound:vm-adminSecret:
+    secure: AAABAFEcspyU43bhTXpTi7fu1s1SpvCWoUhuqAYJJoouMa7f9c8b2izX6o7AXs1WATTZvFj0
+  foxnhound:container-registry-password:
+    secure: AAABAE4FFACPA50EKtERbfpTEoKQ0wLzLlTpRNMQfdyBCDjKEUPjCJiIXMLvJ6f4iceoXHv3PIp3j9LxSuk+S0Odbsw=
+  foxnhound:container-registry-login: johannesrosskopp
+  foxnhound:container-registry-url: https://index.docker.io/v1

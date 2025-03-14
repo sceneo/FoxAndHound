@@ -7,14 +7,9 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { ModelsManagementSummaryRatingDTO } from './modelsManagementSummaryRatingDTO';
 
 
 export interface ModelsManagementSummaryDTO { 
-    /**
-     * Array of management ratings
-     */
-    ratings?: Array<ModelsManagementSummaryRatingDTO>;
     userEmail?: string;
 }
 

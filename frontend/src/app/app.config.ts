@@ -12,6 +12,6 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideAnimationsAsync(),
     provideHttpClient(),
-    provideApiModule('http://localhost:8080/api'),
+    provideApiModule(),
   ]
 };

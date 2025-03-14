@@ -3,8 +3,7 @@ README.md
 api.module.ts
 api/api.ts
 api/headData.service.ts
-api/managementAverage.service.ts
-api/managementSummary.service.ts
+api/managmentSummary.service.ts
 api/ratingCandidate.service.ts
 api/ratingCard.service.ts
 api/ratingEmployer.service.ts
@@ -13,15 +12,11 @@ encoder.ts
 git_push.sh
 index.ts
 model/models.ts
-model/modelsAverageRatingDTO.ts
 model/modelsCandidateRatingDTO.ts
-model/modelsCategoryEnum.ts
 model/modelsEmployerRatingDTO.ts
 model/modelsErrorResponse.ts
 model/modelsHeadDataDTO.ts
-model/modelsManagementAverageDTO.ts
 model/modelsManagementSummaryDTO.ts
-model/modelsManagementSummaryRatingDTO.ts
 model/modelsRatingCard.ts
 param.ts
 variables.ts

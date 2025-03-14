@@ -441,7 +441,7 @@ func createMySqlServer(args MySqlServerArgs) MySqlServerReturn {
 	// 	return MySqlServerReturn{err: err}
 	// }
 
-	db, err := dbformysql.NewDatabase(args.ctx, "foxnhound-db", &dbformysql.DatabaseArgs{
+	db, err := dbformysql.NewDatabase(args.ctx, "fox_and_hound", &dbformysql.DatabaseArgs{
 		Charset:           pulumi.String("utf8"),
 		Collation:         pulumi.String("utf8_general_ci"),
 		ServerName:        dbserver.Name,

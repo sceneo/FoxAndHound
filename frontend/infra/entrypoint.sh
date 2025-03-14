@@ -12,5 +12,11 @@ else
   echo "{}" > /usr/share/nginx/html/config.json
 fi
 
+PORT="${PORT:-8080}"
+if [ "8080" != "${PORT}" ]; then
+  echo "Setting Nginx port to ${PORT}"
+  sed -i -e "s|listen 8080|listen ${PORT}|g" /etc/nginx/conf.d/default.conf
+fi
+
 # Start Nginx
 nginx -g 'daemon off;'

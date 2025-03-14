@@ -1,21 +1,16 @@
 import { EnvironmentProviders, makeEnvironmentProviders } from '@angular/core';
 import { Configuration } from './configuration';
+import { getRuntimeConfig } from '../../main';
 
-export function provideApiModule(basePath: string): EnvironmentProviders {
+export function provideApiModule(): EnvironmentProviders {
     return makeEnvironmentProviders([
-        { provide: Configuration, useFactory: () => getConfig(basePath) }
+        {
+            provide: Configuration,
+            useFactory: () => {
+                const config = getRuntimeConfig();
+                console.log('provideApiModule baseUrl', config.apiBaseUrl);
+                return new Configuration({ basePath: config.apiBaseUrl });
+            },
+        }
     ]);
-}
-
-// Getting the config on runtime from the server which creates it from env variables.
-export async function getConfig(basePath: string): Promise<Configuration> {
-    console.log('getConfig');
-    const response = await fetch('/config');
-    const config = await response.json();
-    console.log('config from server', config);
-    if (config?.API_BASE_PATH) {
-        console.log('API_BASE_PATH', config.API_BASE_PATH);
-        basePath = config.API_BASE_PATH;
-    }
-    return new Configuration({ basePath });
 }

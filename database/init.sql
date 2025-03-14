@@ -1,3 +1,5 @@
+use fox_and_hound;
+
 DROP TABLE IF EXISTS rating_cards;
 DROP TABLE IF EXISTS ratings;
 DROP TABLE IF EXISTS head_data;

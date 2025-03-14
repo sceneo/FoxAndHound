@@ -20,13 +20,11 @@ const (
 
 func main() {
 	pulumi.Run(func(ctx *pulumi.Context) error {
-		// Create an Azure Resource Group
 		resourceGroup, err := resources.NewResourceGroup(ctx, "foxnhound-rg", nil)
 		if err != nil {
 			return err
 		}
 
-		// Create a Virtual Network
 		vnet, err := network.NewVirtualNetwork(ctx, "foxnhound-vnet", &network.VirtualNetworkArgs{
 			ResourceGroupName: resourceGroup.Name,
 			AddressSpace: &network.AddressSpaceArgs{
@@ -46,32 +44,34 @@ func main() {
 		// }
 
 		// Create MySQL Server
-		returnReturn := createMySqlServer(MySqlServerArgs{
+		serverReturn := createMySqlServer(MySqlServerArgs{
 			ctx:           ctx,
 			resourceGroup: resourceGroup,
 			vnet:          vnet})
-		if returnReturn.err != nil {
-			return returnReturn.err
+		if serverReturn.err != nil || serverReturn.dbServer == nil || serverReturn.db == nil {
+			return serverReturn.err
 		}
 
-		backendReturn := createBackend(WebAppArgs{
-			ctx:            ctx,
-			resourceGroup:  resourceGroup,
-			vnet:           vnet,
-			appServicePlan: nil,
+		// Create a Web App running a container on Linux
+		backendReturn := createBackend(BackendArgs{
+			ctx:           ctx,
+			resourceGroup: resourceGroup,
+			vnet:          vnet,
+			dbServerFQDN:  serverReturn.dbServer.FullyQualifiedDomainName,
+			dbName:        serverReturn.db.Name,
 		})
-		if backendReturn.err != nil || backendReturn.appServicePlan == nil {
+		if backendReturn.err != nil {
 			return backendReturn.err
 		}
 
-		webAppReturn := createFrontend(WebAppArgs{
-			ctx:            ctx,
-			resourceGroup:  resourceGroup,
-			vnet:           nil,
-			appServicePlan: backendReturn.appServicePlan,
+		frontendReturn := createFrontend(FrontendArgs{
+			ctx:             ctx,
+			resourceGroup:   resourceGroup,
+			appServicePlan:  backendReturn.appServicePlan,
+			defaultHostname: backendReturn.webapp.DefaultHostName,
 		})
-		if webAppReturn.err != nil {
-			return webAppReturn.err
+		if frontendReturn.err != nil {
+			return frontendReturn.err
 		}
 
 		vmReturn := createVm(VmArgs{
@@ -115,8 +115,6 @@ func createVm(args VmArgs) VmReturn {
 	}
 
 	vmPublicIp, err := network.NewPublicIPAddress(args.ctx, "foxnhound-vm-public-ip", &network.PublicIPAddressArgs{
-		// Location:            pulumi.String("eastus"),
-		// PublicIpAddressName: pulumi.String("test-ip"),
 		ResourceGroupName: args.resourceGroup.Name,
 	})
 	if err != nil {
@@ -124,8 +122,6 @@ func createVm(args VmArgs) VmReturn {
 	}
 
 	vmNetworkInterface, err := network.NewNetworkInterface(args.ctx, "foxnhound-vm-network-interface", &network.NetworkInterfaceArgs{
-		// DisableTcpStateTracking:     pulumi.Bool(true),
-		// EnableAcceleratedNetworking: pulumi.Bool(true),
 		IpConfigurations: network.NetworkInterfaceIPConfigurationArray{
 			&network.NetworkInterfaceIPConfigurationArgs{
 				Name: pulumi.String("ipconfig1"),
@@ -137,8 +133,6 @@ func createVm(args VmArgs) VmReturn {
 				},
 			},
 		},
-		// Location:             pulumi.String("eastus"),
-		// NetworkInterfaceName: pulumi.String("test-nic"),
 		ResourceGroupName: args.resourceGroup.Name,
 	})
 	if err != nil {
@@ -147,7 +141,6 @@ func createVm(args VmArgs) VmReturn {
 
 	adminLogin := config.Require("vm-adminLogin")
 	adminSecret := config.Require("vm-adminSecret")
-	// Create the Azure Stack HCI Virtual Machine
 	vm, err := compute.NewVirtualMachine(args.ctx, "foxnhound-vm", &compute.VirtualMachineArgs{
 		ResourceGroupName: args.resourceGroup.Name,
 		NetworkProfile: compute.NetworkProfileArgs{
@@ -164,7 +157,6 @@ func createVm(args VmArgs) VmReturn {
 			ComputerName:  pulumi.String("foxnhound-vm"),
 			AdminUsername: pulumi.String(adminLogin),
 			AdminPassword: pulumi.String(adminSecret),
-			// CustomData:    pulumi.String(b64Encode("#!/bin/bash\nsudo apt-get update\nsudo apt-get install -y mysql-client")),
 		},
 		StorageProfile: &compute.StorageProfileArgs{
 			OsDisk: compute.OSDiskArgs{
@@ -188,23 +180,23 @@ func createVm(args VmArgs) VmReturn {
 	return VmReturn{vm: vm}
 }
 
-type WebAppArgs struct {
-	ctx            *pulumi.Context
-	resourceGroup  *resources.ResourceGroup
-	vnet           *network.VirtualNetwork
-	appServicePlan *web.AppServicePlan
+type BackendArgs struct {
+	ctx           *pulumi.Context
+	resourceGroup *resources.ResourceGroup
+	vnet          *network.VirtualNetwork
+	dbServerFQDN  pulumi.StringOutput
+	dbName        pulumi.StringOutput
 }
 
-type WebAppReturn struct {
+type BackendReturn struct {
 	webapp         *web.WebApp
 	appServicePlan *web.AppServicePlan
 	err            error
 }
 
-func createBackend(args WebAppArgs) WebAppReturn {
+func createBackend(args BackendArgs) BackendReturn {
 	config := config.New(args.ctx, "")
 
-	// Cretae a new delegated subnet
 	subnet, err := network.NewSubnet(args.ctx, "foxnhound-sn-backend", &network.SubnetArgs{
 		Delegations: network.DelegationArray{
 			&network.DelegationArgs{
@@ -217,37 +209,36 @@ func createBackend(args WebAppArgs) WebAppReturn {
 		AddressPrefix:      pulumi.String(BACKEND_SUBNET_RANGE),
 	})
 	if err != nil {
-		return WebAppReturn{err: err}
+		return BackendReturn{err: err}
 	}
 
-	if args.appServicePlan == nil {
-		// Create an App Service Plan if wen need to
-		args.appServicePlan, err = web.NewAppServicePlan(args.ctx, "appServicePlan", &web.AppServicePlanArgs{
-			ResourceGroupName: args.resourceGroup.Name,
-			Location:          args.resourceGroup.Location,
-			Sku: &web.SkuDescriptionArgs{
-				Name:     pulumi.String("B1"),
-				Tier:     pulumi.String("Basic"),
-				Capacity: pulumi.Int(1),
-			},
-			Reserved: pulumi.Bool(true), // Reserved indicates Linux
-		})
-		if err != nil {
-			return WebAppReturn{err: err}
-		}
+	// Create an App Service Plan if wen need to
+	appServicePlan, err := web.NewAppServicePlan(args.ctx, "appServicePlan", &web.AppServicePlanArgs{
+		ResourceGroupName: args.resourceGroup.Name,
+		Location:          args.resourceGroup.Location,
+		Sku: &web.SkuDescriptionArgs{
+			Name:     pulumi.String("B1"),
+			Tier:     pulumi.String("Basic"),
+			Capacity: pulumi.Int(1),
+		},
+		Reserved: pulumi.Bool(true), // Reserved indicates Linux
+	})
+	if err != nil {
+		return BackendReturn{err: err}
 	}
 
-	// Create a Web App running a container on Linux
-	containerRegistryLogin := config.Require("backend-container-registry-login")
-	containerRegistryPassword := config.Require("backend-container-registry-password")
-	containerRegistryUrl := config.Require("backend-container-registry-url")
+	containerRegistryLogin := config.Require("container-registry-login")
+	containerRegistryPassword := config.Require("container-registry-password")
+	containerRegistryUrl := config.Require("container-registry-url")
+	containerRegistryBasePath := config.Require("container-registry-base-path")
+	backendImageTag := config.Require("backend-image-tag")
 	webApp, err := web.NewWebApp(args.ctx, "foxnhound-backend", &web.WebAppArgs{
 		ResourceGroupName: args.resourceGroup.Name,
 		Location:          args.resourceGroup.Location,
-		ServerFarmId:      args.appServicePlan.ID(),
+		ServerFarmId:      appServicePlan.ID(),
 		SiteConfig: &web.SiteConfigArgs{
 			AlwaysOn:       pulumi.Bool(true),
-			LinuxFxVersion: pulumi.String("DOCKER|johannesrosskopp/my_private_repository:foxandhound-backend_dev_latest"),
+			LinuxFxVersion: pulumi.String(containerRegistryBasePath + ":" + backendImageTag),
 			AppSettings: web.NameValuePairArray{
 				&web.NameValuePairArgs{
 					Name:  pulumi.String("DOCKER_REGISTRY_SERVER_URL"),
@@ -261,30 +252,74 @@ func createBackend(args WebAppArgs) WebAppReturn {
 					Name:  pulumi.String("DOCKER_REGISTRY_SERVER_PASSWORD"),
 					Value: pulumi.String(containerRegistryPassword),
 				},
+				&web.NameValuePairArgs{
+					Name:  pulumi.String("DB_USER"),
+					Value: pulumi.String(config.Require("mysql-adminLogin")),
+				},
+				&web.NameValuePairArgs{
+					Name:  pulumi.String("DB_PASSWORD"),
+					Value: pulumi.String(config.Require("mysql-adminSecret")),
+				},
+				&web.NameValuePairArgs{
+					Name:  pulumi.String("DB_HOST"),
+					Value: args.dbServerFQDN,
+				},
+				&web.NameValuePairArgs{
+					Name:  pulumi.String("DB_PORT"),
+					Value: pulumi.String("3306"),
+				},
+				&web.NameValuePairArgs{
+					Name:  pulumi.String("DB_NAME"),
+					Value: args.dbName,
+				},
+				&web.NameValuePairArgs{
+					Name:  pulumi.String("DB_TLS"),
+					Value: pulumi.String("CUSTOM"),
+				},
+				&web.NameValuePairArgs{
+					Name:  pulumi.String("CA_CERT_PATH"),
+					Value: pulumi.String("certs/DigiCertGlobalRootCA.crt.pem"),
+				},
+				&web.NameValuePairArgs{
+					Name:  pulumi.String("STAGE"),
+					Value: pulumi.String("dev"),
+				},
 			},
 		},
 		VirtualNetworkSubnetId: subnet.ID(),
 	})
-	if err != nil {
-		return WebAppReturn{err: err}
-	}
 
-	return WebAppReturn{webapp: webApp, appServicePlan: args.appServicePlan}
+	return BackendReturn{webapp: webApp, appServicePlan: appServicePlan}
 }
 
-func createFrontend(args WebAppArgs) WebAppReturn {
+type FrontendArgs struct {
+	ctx             *pulumi.Context
+	resourceGroup   *resources.ResourceGroup
+	appServicePlan  *web.AppServicePlan
+	defaultHostname pulumi.StringOutput
+}
+
+type FrontendReturn struct {
+	webapp *web.WebApp
+	err    error
+}
+
+func createFrontend(args FrontendArgs) FrontendReturn {
 	config := config.New(args.ctx, "")
-	containerRegistryLogin := config.Require("backend-container-registry-login")
-	containerRegistryPassword := config.Require("backend-container-registry-password")
-	containerRegistryUrl := config.Require("backend-container-registry-url")
-	// Create a Web App running a container on Linux
+	containerRegistryLogin := config.Require("container-registry-login")
+	containerRegistryPassword := config.Require("container-registry-password")
+	containerRegistryUrl := config.Require("container-registry-url")
+	containerRegistryBasePath := config.Require("container-registry-base-path")
+	webappImageTag := config.Require("webapp-image-tag")
+	backendUrl := pulumi.Sprintf("https://%s", args.defaultHostname)
+
 	webApp, err := web.NewWebApp(args.ctx, "foxnhound-webapp", &web.WebAppArgs{
 		ResourceGroupName: args.resourceGroup.Name,
 		Location:          args.resourceGroup.Location,
 		ServerFarmId:      args.appServicePlan.ID(),
 		SiteConfig: &web.SiteConfigArgs{
 			AlwaysOn:       pulumi.Bool(true),
-			LinuxFxVersion: pulumi.String("DOCKER|johannesrosskopp/my_private_repository:foxandhound-webapp_dev_latest"),
+			LinuxFxVersion: pulumi.String(containerRegistryBasePath + ":" + webappImageTag),
 			AppSettings: web.NameValuePairArray{
 				&web.NameValuePairArgs{
 					Name:  pulumi.String("DOCKER_REGISTRY_SERVER_URL"),
@@ -298,14 +333,22 @@ func createFrontend(args WebAppArgs) WebAppReturn {
 					Name:  pulumi.String("DOCKER_REGISTRY_SERVER_PASSWORD"),
 					Value: pulumi.String(containerRegistryPassword),
 				},
+				&web.NameValuePairArgs{
+					Name: pulumi.String("BACKEND_URL"),
+					Value: backendUrl,
+				},
+				&web.NameValuePairArgs{
+					Name:  pulumi.String("STAGE"),
+					Value: pulumi.String("dev"),
+				},
 			},
 		},
 	})
 	if err != nil {
-		return WebAppReturn{err: err}
+		return FrontendReturn{err: err}
 	}
 
-	return WebAppReturn{webapp: webApp}
+	return FrontendReturn{webapp: webApp}
 }
 
 type MySqlServerArgs struct {
@@ -315,7 +358,8 @@ type MySqlServerArgs struct {
 }
 
 type MySqlServerReturn struct {
-	dbserver *dbformysql.Server
+	dbServer *dbformysql.Server
+	db       *dbformysql.Database
 	err      error
 }
 
@@ -397,7 +441,7 @@ func createMySqlServer(args MySqlServerArgs) MySqlServerReturn {
 	// 	return MySqlServerReturn{err: err}
 	// }
 
-	_, err = dbformysql.NewDatabase(args.ctx, "foxnhound-db", &dbformysql.DatabaseArgs{
+	db, err := dbformysql.NewDatabase(args.ctx, "fox_and_hound", &dbformysql.DatabaseArgs{
 		Charset:           pulumi.String("utf8"),
 		Collation:         pulumi.String("utf8_general_ci"),
 		ServerName:        dbserver.Name,
@@ -407,7 +451,7 @@ func createMySqlServer(args MySqlServerArgs) MySqlServerReturn {
 		return MySqlServerReturn{err: err}
 	}
 
-	return MySqlServerReturn{dbserver: dbserver}
+	return MySqlServerReturn{dbServer: dbserver, db: db}
 
 }
 

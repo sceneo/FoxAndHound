@@ -47,7 +47,7 @@ var DB *gorm.DB
 func init() {
 	stage := os.Getenv("STAGE")
 	if stage != string(StageDev) && stage != string(StageProd) {
-		log.Printf("Not in a remote environment, loading .env file")
+		log.Printf("Not in a remote environment, current stage: %s", stage)
 		loadEnv()
 	}
 	config = buidConfig()
@@ -104,6 +104,7 @@ func getDefaultConfig() Config {
 }
 
 func loadEnv() {
+	log.Printf("Loading .env file")
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("❌ Error loading .env file")
@@ -112,6 +113,7 @@ func loadEnv() {
 
 func addCustomCert() {
 	// Load the CA certificate
+	log.Printf("Loading CA certificate from %s", config.caCertPath)
 	caCert, err := os.ReadFile(config.caCertPath)
 	if err != nil {
 		log.Fatalf("Failed to read CA certificate: %v", err)
@@ -121,6 +123,7 @@ func addCustomCert() {
 	caCertPool.AppendCertsFromPEM(caCert)
 
 	// Register a custom TLS config
+	log.Printf("Registering custom TLS config")
 	err = mysqlDriver.RegisterTLSConfig("custom", &tls.Config{
 		RootCAs: caCertPool,
 	})
@@ -143,12 +146,21 @@ func ConnectDatabase() *gorm.DB {
 	}
 	log.Printf("Resolved hostname %s to addresses: %v", config.dbHost, addrs)
 
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+	// Build connection string with TLS parameter
+	tlsConfig := ""
+	if config.dbTlsSetting == DbTlsCustom {
+		tlsConfig = "tls=custom"
+	} else if config.dbTlsSetting == DbTlsDisable {
+		tlsConfig = "tls=false"
+	}
+
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local&%s",
 		config.dbUser,
 		config.dbPassword,
 		config.dbHost,
 		config.dbPort,
 		config.dbName,
+		tlsConfig,
 	)
 
 	db, err := gorm.Open(mysql.New(mysql.Config{

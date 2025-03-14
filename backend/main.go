@@ -5,10 +5,11 @@ import (
 	"backend/config"
 	"backend/middlewares"
 	"log"
+	"os"
 
 	"github.com/gin-gonic/gin"
-	"github.com/swaggo/gin-swagger"
 	"github.com/swaggo/files"
+	"github.com/swaggo/gin-swagger"
 
 	_ "backend/docs"
 )
@@ -33,7 +34,18 @@ func main() {
 	api.SetupRoutes(router)
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	log.Println("🚀 Server running on http://localhost:8080")
-	log.Println("📖 Swagger UI available at http://localhost:8080/swagger/index.html")
-	log.Fatal(router.Run(":8080"))
+	// Add a simple health check endpoint
+    router.GET("/", func(c *gin.Context) {
+        c.JSON(200, gin.H{
+            "status": "ok",
+        })
+    })
+
+	port := os.Getenv("PORT")
+    if port == "" {
+        port = "8080" // Default port if not specified
+    }
+	log.Printf("🚀 Server running on http://localhost:%s", port)
+	log.Printf("📖 Swagger UI available at http://localhost:%s/swagger/index.html", port)
+	log.Fatal(router.Run(":" + port))
 }

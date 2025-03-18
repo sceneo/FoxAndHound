@@ -11,6 +11,8 @@ import { ModelsCandidateRatingDTO, RatingCandidateService } from '../api';
 import { SuccessfullComponent } from '../successfull/successfull.component';
 import {MatCheckbox} from '@angular/material/checkbox';
 import {SuccessfullySavedComponent} from '../successfull-saved/successfully-saved.component';
+import { AuthService } from '../auth/auth.service';
+import { switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-senior-candidate',
@@ -36,12 +38,20 @@ export class SeniorCandidateComponent implements OnInit {
   ratingForm!: FormGroup;
   categories: string[] = [];
 
-  constructor(private ratingService: RatingCandidateService, private dialog: MatDialog) {}
+  constructor(
+    private ratingService: RatingCandidateService,
+    private dialog: MatDialog,
+    private authService: AuthService
+  ) {}
 
   ngOnInit() {
     this.isLoading = true;
-    // TODO: Here the mail of the logged in user needs to be set... since no auth till yet auto set to next senior :-)
-    this.ratingService.ratingsCandidateGet("thomas.lederer@prodyna.com").subscribe((ratingCardDtos: ModelsCandidateRatingDTO[]) => {
+
+    this.authService.getUsername().pipe(
+      switchMap(username => {
+        return this.ratingService.ratingsCandidateGet(username);
+      })
+    ).subscribe((ratingCardDtos: ModelsCandidateRatingDTO[]) => {
       this.candidateRatings = ratingCardDtos;
       this.categories = [...new Set(ratingCardDtos.map(rating => String(rating.category)))];
       this.isLoading = false;
@@ -52,7 +62,7 @@ export class SeniorCandidateComponent implements OnInit {
   initializeForm() {
     const controls: Record<string, FormControl> = {};
 
-    controls[`email`] = new FormControl("thomas.lederer@prodyna.com", [Validators.required, Validators.email]);
+    controls[`email`] = new FormControl(this.candidateRatings[0].userEmail, [Validators.required, Validators.email]);
     controls[`email`].disable();
 
     this.candidateRatings.forEach((rating) => {
@@ -61,9 +71,7 @@ export class SeniorCandidateComponent implements OnInit {
       controls[`not_applicable_${rating.ratingCardId}`] = new FormControl(rating.notApplicableCandidate || false, undefined);
     });
 
-    this.ratingForm = new FormGroup(controls);  // Assign FormGroup after initialization
-
-    // TODO: use unsubscribe
+    this.ratingForm = new FormGroup(controls);
   }
 
 

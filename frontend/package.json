@@ -3,10 +3,15 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve --configuration=local",
     "build": "ng build",
+    "build-local": "ng build --configuration=local",
+    "build-dev": "ng build --configuration=development",
+    "build-prod": "ng build --configuration=production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
+    "build-image": "docker build -t frontend .",
+    "run-image": "docker run -p 4200:80 --name frontend frontend",
     "generate-swagger": "curl -o swagger.json http://localhost:8080/swagger/doc.json && openapi-generator-cli generate -i swagger.json -g typescript-angular -o src/app/api -t custom-templates"
   },
   "private": true,
@@ -21,6 +26,8 @@
     "@angular/platform-browser": "^19.1.0",
     "@angular/platform-browser-dynamic": "^19.1.0",
     "@angular/router": "^19.1.0",
+    "@azure/msal-angular": "^4.0.6",
+    "@azure/msal-browser": "^4.7.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"

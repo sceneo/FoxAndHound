@@ -1,5 +1,8 @@
 import { Routes } from '@angular/router';
-import {AuthGuard} from './authorization/auth-guard.service';
+import { MsalGuard } from '@azure/msal-angular';
+import { environment } from '../environments/environment';
+
+const authGuard = environment.useMsalAuth ? [MsalGuard] : [];
 
 export const routes: Routes = [
   {
@@ -10,17 +13,17 @@ export const routes: Routes = [
   {
     path: "candidate",
     loadComponent: () => import('./senior-candidate/senior-candidate.component').then(m => m.SeniorCandidateComponent),
-    canActivate: [AuthGuard],
+    canActivate: authGuard,
   },
   {
     path: "hr",
     loadComponent: () => import('./hr/hr.component').then(m => m.HrComponent),
-    canActivate: [AuthGuard],
+    canActivate: authGuard,
   },
   {
     path: "management",
     loadComponent: () => import('./management-dashboard/management-dashboard.component').then(m => m.ManagementDashboardComponent),
-    canActivate: [AuthGuard],
+    canActivate: authGuard,
   },
   {
     path: "error",
@@ -29,6 +32,10 @@ export const routes: Routes = [
   {
     path: "successfull",
     loadComponent: () => import('./successfull/successfull.component').then(m => m.SuccessfullComponent),
+  },
+  {
+    path: "auth",
+    loadComponent: () => import('./auth/auth.component').then(m => m.AuthComponent),
   },
   {
     path: "unauthorized",

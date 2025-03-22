@@ -19,6 +19,7 @@ import { map, Observable, of, startWith, switchMap, tap } from 'rxjs';
 import {MatSlideToggle} from '@angular/material/slide-toggle';
 import {RatingGraphicComponent} from '../rating-graphic/rating-graphic.component';
 import {MatCheckbox} from '@angular/material/checkbox';
+import {Country} from '../models/country.enum';
 
 @Component({
   selector: 'app-hr',
@@ -56,6 +57,7 @@ export class HrComponent implements OnInit {
     "hideRating": new FormControl(true, [])
   });
   filteredCandidates: Observable<string[]> = of([]);
+  availableCountries: string[] = Object.values(Country);
 
   private selectedUserMail: string | null = null;
 

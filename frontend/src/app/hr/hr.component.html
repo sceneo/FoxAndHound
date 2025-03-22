@@ -45,9 +45,11 @@
       </mat-form-field>
     <div class="subheading">Country</div>
     <mat-form-field class="full-width">
-      <div class="inputs">
-        <input matInput [formControlName]="'country'">
-      </div>
+      <mat-select [formControlName]="'country'">
+        <mat-option *ngFor="let country of availableCountries" [value]="country">
+          {{ country }}
+        </mat-option>
+      </mat-select>
     </mat-form-field>
     <div class="subheading">Experience since</div>
       <mat-form-field class="full-width">

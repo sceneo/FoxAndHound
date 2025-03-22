@@ -22,7 +22,8 @@ CREATE TABLE IF NOT EXISTS ratings (
     not_applicable_candidate BOOLEAN,
     rating_employer INT NOT NULL,
     text_response_employer TEXT,
-    not_applicable_employer BOOLEAN
+    not_applicable_employer BOOLEAN,
+    is_closed BOOLEAN NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS head_data (
@@ -32,8 +33,11 @@ CREATE TABLE IF NOT EXISTS head_data (
     start_at_prodyna TIMESTAMP NULL,
     age INT NOT NULL,
     abstract TEXT NOT NULL,
-    agreed_on BOOLEAN NOT NULL
-    );
+    agreed_on BOOLEAN NOT NULL,
+    submit_to_management BOOLEAN NOT NULL,
+    country VARCHAR(255) NOT NULL,
+    is_promoted BOOLEAN NOT NULL
+);
 
 
 START TRANSACTION;

@@ -31,6 +31,9 @@
     <mat-slide-toggle formControlName="agreedOn">
       Agreed on
     </mat-slide-toggle>
+    <mat-slide-toggle formControlName="submitToManagement">
+      Submit to Management
+    </mat-slide-toggle>
   </div>
   <h2 class="category-title">General Data</h2>
   <div class="rating-card margin-offset">
@@ -40,6 +43,12 @@
           <input matInput [formControlName]="'name'">
         </div>
       </mat-form-field>
+    <div class="subheading">Country</div>
+    <mat-form-field class="full-width">
+      <div class="inputs">
+        <input matInput [formControlName]="'country'">
+      </div>
+    </mat-form-field>
     <div class="subheading">Experience since</div>
       <mat-form-field class="full-width">
         <input matInput [formControlName]="'experienceSince'" type="date">

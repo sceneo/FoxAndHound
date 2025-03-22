@@ -23,4 +23,5 @@ type Rating struct {
 	RatingEmployer         int        `json:"ratingEmployer"`
 	TextResponseEmployer   string     `json:"textResponseEmployer"`
 	NotApplicableEmployer  bool       `json:"notApplicableEmployer"`
+	IsClosed               bool       `json:"isClosed"`
 }

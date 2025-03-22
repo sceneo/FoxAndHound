@@ -590,6 +590,9 @@ const docTemplate = `{
                 "agreedOn": {
                     "type": "boolean"
                 },
+                "country": {
+                    "type": "string"
+                },
                 "experienceSince": {
                     "type": "string"
                 },
@@ -598,6 +601,9 @@ const docTemplate = `{
                 },
                 "startAtProdyna": {
                     "type": "string"
+                },
+                "submitToManagement": {
+                    "type": "boolean"
                 },
                 "userEmail": {
                     "type": "string"

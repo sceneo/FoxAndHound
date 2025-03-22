@@ -94,12 +94,16 @@ definitions:
         type: integer
       agreedOn:
         type: boolean
+      country:
+        type: string
       experienceSince:
         type: string
       name:
         type: string
       startAtProdyna:
         type: string
+      submitToManagement:
+        type: boolean
       userEmail:
         type: string
     type: object

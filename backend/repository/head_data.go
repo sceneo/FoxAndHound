@@ -56,12 +56,15 @@ func SaveOrUpdateHeadData(ctx context.Context, headData models.HeadData) error {
 
 	if result.RowsAffected > 0 {
 		updateFields := map[string]interface{}{
-			"name":              headData.Name,
-			"experience_since":  headData.ExperienceSince,
-			"start_at_prodyna":  headData.StartAtProdyna,
-			"age":               headData.Age,
-			"abstract":          headData.Abstract,
-			"agreed_on":         headData.AgreedOn,
+			"name":                 headData.Name,
+			"experience_since":     headData.ExperienceSince,
+			"start_at_prodyna":     headData.StartAtProdyna,
+			"age":                  headData.Age,
+			"abstract":             headData.Abstract,
+			"agreed_on":            headData.AgreedOn,
+			"submit_to_management": headData.SubmitToManagement,
+			"country":              headData.Country,
+			"is_promoted":          headData.IsPromoted,
 		}
 
 		err := tx.Model(&existing).Where("user_email = ?", headData.UserEmail).Updates(updateFields).Error
@@ -81,4 +84,3 @@ func SaveOrUpdateHeadData(ctx context.Context, headData models.HeadData) error {
 
 	return tx.Commit().Error
 }
-

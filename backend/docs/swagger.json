@@ -584,6 +584,9 @@
                 "agreedOn": {
                     "type": "boolean"
                 },
+                "country": {
+                    "type": "string"
+                },
                 "experienceSince": {
                     "type": "string"
                 },
@@ -592,6 +595,9 @@
                 },
                 "startAtProdyna": {
                     "type": "string"
+                },
+                "submitToManagement": {
+                    "type": "boolean"
                 },
                 "userEmail": {
                     "type": "string"

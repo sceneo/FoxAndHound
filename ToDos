@@ -1,0 +1,26 @@
+F&H
+
+Candidate View
+Nach agreed on nicht mehr änderbar
+Not applicable checkbox (in BE übernehmen)
+Darüber nachdenken: wie kann man für ein neues jähr einen anlegen („nicht reopen“), falls es ein follow up gibt
+Weisses theme aus yasm klauen
+Date ans backend gebe/ändern
+Date übergäbe richtig einbinden
+Testdaten anlegen
+GitHub Projekt anlegen
+
+
+Miriam Top Prios
+Accept for Management Meeting
+Approved by management
+"Archiv" candidate rating card
+Zugriff für HR -> Tabelle anlegen
+Miriam schickt mir eine liste
+Länder einfügen
+Vergleichbarkeit über Länder (Filter, default: vergleich mit allen)
+Neue Eingänge in der letzten Woche
+Filter auf "country" für averaging
+"IsClosed" soll auf true gesetzt werden am ende des prozesses - pro jahr? hierfür bruachen wir einen auslöser
+Filter auf "submit to management" statt auf agreed on. Submit to Management nur einblenden, wenn agreed on aktiviert ist
+Endpunkt: Der zug hat keine bremse

@@ -14,13 +14,16 @@ func GetHeadData(ctx context.Context, userEmail string) (models.HeadDataDTO, err
 	}
 
 	dto := models.HeadDataDTO{
-		UserEmail:       userEmail,
-		Name:            headData.Name,
-		ExperienceSince: headData.ExperienceSince,
-		StartAtProdyna:  headData.StartAtProdyna,
-		Age:             headData.Age,
-		Abstract:        headData.Abstract,
-		AgreedOn:        headData.AgreedOn,
+		UserEmail:          userEmail,
+		Name:               headData.Name,
+		ExperienceSince:    headData.ExperienceSince,
+		StartAtProdyna:     headData.StartAtProdyna,
+		Age:                headData.Age,
+		Abstract:           headData.Abstract,
+		AgreedOn:           headData.AgreedOn,
+		SubmitToManagement: headData.SubmitToManagement,
+		Country:            headData.Country,
+		IsPromoted:         headData.IsPromoted,
 	}
 
 	return dto, nil
@@ -28,13 +31,16 @@ func GetHeadData(ctx context.Context, userEmail string) (models.HeadDataDTO, err
 
 func SaveHeadData(ctx context.Context, headDataDTO models.HeadDataDTO) error {
 	headData := models.HeadData{
-		UserEmail:       headDataDTO.UserEmail,
-		Name:            headDataDTO.Name,
-		ExperienceSince: headDataDTO.ExperienceSince,
-		StartAtProdyna:  headDataDTO.StartAtProdyna,
-		Age:             headDataDTO.Age,
-		Abstract:        headDataDTO.Abstract,
-		AgreedOn:        headDataDTO.AgreedOn,
+		UserEmail:          headDataDTO.UserEmail,
+		Name:               headDataDTO.Name,
+		ExperienceSince:    headDataDTO.ExperienceSince,
+		StartAtProdyna:     headDataDTO.StartAtProdyna,
+		Age:                headDataDTO.Age,
+		Abstract:           headDataDTO.Abstract,
+		AgreedOn:           headDataDTO.AgreedOn,
+		SubmitToManagement: headDataDTO.SubmitToManagement,
+		Country:            headDataDTO.Country,
+		IsPromoted:         headDataDTO.IsPromoted,
 	}
 
 	err := repository.SaveOrUpdateHeadData(ctx, headData)

@@ -13,9 +13,11 @@ export interface ModelsHeadDataDTO {
     'abstract'?: string;
     age?: number;
     agreedOn?: boolean;
+    country?: string;
     experienceSince?: string;
     name?: string;
     startAtProdyna?: string;
+    submitToManagement?: boolean;
     userEmail?: string;
 }
 

@@ -111,6 +111,8 @@ export class HrComponent implements OnInit {
       abstract: headDataFormValues['abstract'],
       age: headDataFormValues['age'],
       agreedOn: headDataFormValues['agreedOn'],
+      submitToManagement: headDataFormValues['submitToManagement'],
+      country: headDataFormValues['country'],
       experienceSince: undefined, //headDataFormValues['experienceSince'],TODO decide on date format
       name: headDataFormValues['name'],
       startAtProdyna: undefined, // headDataFormValues['startAtProdyna'], TODO decide on date format
@@ -140,7 +142,9 @@ export class HrComponent implements OnInit {
     this.headDataService.headDataGet(this.selectedUserMail).subscribe(headData => {
       this.headDataForm = new FormGroup({
         "agreedOn": new FormControl(headData.agreedOn || false, undefined),
+        "submitToManagement": new FormControl(headData.submitToManagement || false, undefined),
         "name": new FormControl(headData.name || "", []),
+        "country": new FormControl(headData.country || "", []),
         "experienceSince": new FormControl(headData.experienceSince || "", []),
         "startAtProdyna": new FormControl(headData.startAtProdyna || "", []),
         "age": new FormControl(headData.age || 0, []),
@@ -150,7 +154,9 @@ export class HrComponent implements OnInit {
       () => {
         this.headDataForm = new FormGroup({
           "agreedOn": new FormControl(false, undefined),
+          "submitToManagement": new FormControl(false, undefined),
           "name": new FormControl("", []),
+          "country": new FormControl("", []),
           "experienceSince": new FormControl( "", []),
           "startAtProdyna": new FormControl( "", []),
           "age": new FormControl(0, []),
